@@ -1,0 +1,11 @@
+class Routes{
+  static const String  _routeHome = "HomePage";
+  static const String  _routeExplore = "ExplorePage" ;
+  static const String  _routeLogin = "LoginPage";
+  static const String  _routeSignUp = "SignupPage";
+
+  static String get routeHome => _routeHome;
+  static String get routeExplore => _routeExplore;
+  static String get routeLogin => _routeLogin;
+  static String get routeSignUp => _routeSignUp;
+}
