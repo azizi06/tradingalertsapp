@@ -25,6 +25,7 @@ final GoRouter _router = GoRouter(
       path: '/test', 
       name: "test", 
       builder: (context, state) => MyTestPage(), ),
+
     //GoRoute( path: '/login', name: Routes.routeLogin, builder: (context, state) => LoginPage(), ),
     //GoRoute( path: '/signup', name: Routes.routeSignUp, builder: (context, state) => SignupPage(), ),
    ], 
@@ -38,13 +39,15 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
+  
     final brightness = View.of(context).platformDispatcher.platformBrightness;  
     //TextTheme textTheme = Theme.of(context).textTheme;
     TextTheme textTheme = createTextTheme(context, "Roboto Flex", "Roboto");
     MaterialTheme theme = MaterialTheme(textTheme);
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme:  theme.light(),
+      theme:  theme.dark(),
       routerConfig: _router,
     );
   }
