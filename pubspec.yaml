@@ -46,6 +46,7 @@ dependencies:
   dio: ^5.7.0
   sizer: ^3.0.5
   syncfusion_flutter_charts: ^28.1.35
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:

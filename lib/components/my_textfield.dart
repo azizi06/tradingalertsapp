@@ -6,6 +6,7 @@ class MyTextField extends StatelessWidget {
   final TextEditingController myController;
   final String? Function(String?)? myValidator;
   final bool isObscure;
+
   const MyTextField({
     super.key,
     required this.hintText,
@@ -16,25 +17,21 @@ class MyTextField extends StatelessWidget {
   });
 
   @override
-  Widget build(Object context) {
+  Widget build(BuildContext context) {
     return TextFormField(
       enabled: true,
       enableInteractiveSelection: true,
-      validator: myValidator, 
-      
+      validator: myValidator,
       controller: myController,
       obscureText: isObscure,
       decoration: InputDecoration(
         hintText: hintText,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(10)
         ),
         filled: true,
         prefixIcon: myIcon,
       ),
     );
-
   }
 }
-
-
