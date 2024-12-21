@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'util.dart';
-import 'theme.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stocksalertapp/helpers/routes.dart';
 import 'package:stocksalertapp/screens/explore_screen.dart';
@@ -36,15 +34,13 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final brightness = View.of(context).platformDispatcher.platformBrightness;  
-    //TextTheme textTheme = Theme.of(context).textTheme;
-    TextTheme textTheme = createTextTheme(context, "Roboto Flex", "Roboto");
-    MaterialTheme theme = MaterialTheme(textTheme);
     return MaterialApp.router(
       title: 'Flutter Demo',
-      theme:  theme.light(),
+
       routerConfig: _router,
     );
   }
