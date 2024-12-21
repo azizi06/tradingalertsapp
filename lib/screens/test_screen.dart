@@ -1,4 +1,4 @@
-import 'dart:ffi';
+//import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:stocksalertapp/components/my_IconButton.dart';
@@ -34,7 +34,6 @@ class _MyTestPageState extends State<MyTestPage> {
             MyButton(onPressed: ()=> "", text: "azizi", color: design.primary),
 
             MyButton(onPressed: ()=> "", text: "azizi", color: design.secondary),
-            SizedBox(height: 60,width: 400 ,child:  MyButton(onPressed: ()=> "", text: "azizi", color: Colors.red)),
             MyIconButton(onPressed: ()=>"", color: design.error, icon: Icons.headphones),
             SizedBox(height: 40,
             width: 180,
