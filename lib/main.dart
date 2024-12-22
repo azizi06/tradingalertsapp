@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stocksalertapp/models/theme_enum.dart';
+import 'package:stocksalertapp/screens/alarm_screen.dart';
 import 'package:stocksalertapp/state_management/theme_bloc/theme_bloc_provider.dart';
 import 'package:stocksalertapp/state_management/theme_bloc/theme_state.dart';
 import 'util.dart';
@@ -16,14 +17,20 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      name: Routes.routeHome,
+      name: Routes.routeHome,// pour recuperer le nom du route
       builder: (context, state) => MyHomePage(),
     ),
     GoRoute(
-      path: '/explore',
+      path: '/'+Routes.routeExplore,
       name: Routes.routeExplore,
       builder: (context, state) => MyExplorePage(),
     ),
+    GoRoute(
+      path: '/'+Routes.routeAlarm,
+      name: Routes.routeAlarm,
+      builder: (context, state) => MyAlarmPage(),
+    ),
+
     GoRoute(
       path: '/test',
       name: "test",
