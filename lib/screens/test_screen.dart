@@ -2,10 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:stocksalertapp/components/my_IconButton.dart';
+import 'package:stocksalertapp/components/my_bottomAppBar.dart';
 import 'package:stocksalertapp/components/my_button.dart';
 import 'package:stocksalertapp/components/my_textfield.dart';
 import 'package:stocksalertapp/helpers/design.dart';
+import 'package:stocksalertapp/helpers/routes.dart';
 import 'package:stocksalertapp/models/theme_enum.dart';
 import 'package:stocksalertapp/state_management/theme_bloc/theme_bloc_provider.dart';
 import 'package:stocksalertapp/state_management/theme_bloc/theme_event.dart';
@@ -26,6 +29,7 @@ class _MyTestPageState extends State<MyTestPage> {
     Design design = Design(context);
 
     return Scaffold(
+      bottomNavigationBar: MyBottomAppBar(),
       body: Column(
         children: [
           SizedBox(
@@ -35,7 +39,7 @@ class _MyTestPageState extends State<MyTestPage> {
               height: 60,
               width: 300,
               child: MyTextField(
-                  hintText: "algee",
+                  hintText: "alger",
                   myController: wordController,
                   myIcon: Icon(Icons.add_ic_call_outlined),
                   isObscure: false)),
@@ -44,10 +48,10 @@ class _MyTestPageState extends State<MyTestPage> {
           MyButton(onPressed: () => {themeBloc.add(ThemeChangeEvent(ThemeType.light))}, text: "light", color: design.secondary),
           SizedBox(height: 10,),
         
-          MyButton(onPressed: () => {themeBloc.add(ThemeChangeEvent(ThemeType.lightMediumContrast))}, text: "light", color: design.error),
+          MyButton(onPressed: () => {themeBloc.add(ThemeChangeEvent(ThemeType.lightMediumContrast))}, text: "light2", color: design.error),
           SizedBox(height: 10,),
           MyIconButton(
-              onPressed: () => "", color: design.error, icon: Icons.headphones),
+              onPressed: () => {context.goNamed(Routes.routeHome)}, color: design.error, icon: Icons.headphones,text: "Home",),
           SizedBox(
               height: 40,
               width: 180,
