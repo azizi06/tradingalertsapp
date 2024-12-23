@@ -31,13 +31,18 @@ class MyChartScreen extends StatefulWidget {
 class _MyChartScreenState extends State<MyChartScreen> {
   late List<CandelModel> chartData = [];
 
-
-
   Future<List<dynamic>> fetchChartData() async {
     final dio = Dio();
     print("Fetching Data From CoinGecko");
     try {
-      final response = await dio.get( 'https://api.coingecko.com/api/v3/coins/${widget.coinID}/ohlc', queryParameters: { 'vs_currency': 'usd', 'days': '30', 'precision': '5', }, );
+      final response = await dio.get(
+        'https://api.coingecko.com/api/v3/coins/${widget.coinID}/ohlc',
+        queryParameters: {
+          'vs_currency': 'usd',
+          'days': '30',
+          'precision': '5',
+        },
+      );
 
       if (response.statusCode == 200) {
         // Decode response data (Dio already decodes JSON for you)
@@ -51,10 +56,6 @@ class _MyChartScreenState extends State<MyChartScreen> {
       throw Exception('Failed to load coins: $e');
     }
   }
-
-
-
-
 
   Future<List<dynamic>> loadJsonData() async {
     // Load the JSON file
@@ -75,19 +76,26 @@ class _MyChartScreenState extends State<MyChartScreen> {
 
   @override
   void initState() {
-    
     getChartData();
     super.initState();
   }
 
   void getChartData() async {
-    var fetchedData = await loadJsonData();
+    var fetchedData = await fetchChartData();
+    chartData.clear();
     print(fetchedData);
     for (var item in fetchedData) {
       chartData.add(CandelModel.fromJson(item));
     }
+  }
 
-    super.initState();
+  void getLocalChartData() async {
+    var fetchedData = await loadJsonData();
+    print(fetchedData);
+    chartData.clear();
+    for (var item in fetchedData) {
+      chartData.add(CandelModel.fromJson(item));
+    }
   }
 
   @override
@@ -111,6 +119,13 @@ class _MyChartScreenState extends State<MyChartScreen> {
                     onPressed: () {
                       setState(() {
                         print("yaaaaaaaaa");
+                        getLocalChartData();
+                      });
+                    },
+                    icon: Icon(Icons.refresh_outlined)),
+                IconButton(
+                    onPressed: () {
+                      setState(() {
                         getChartData();
                       });
                     },
@@ -139,7 +154,14 @@ class _MyChartScreenState extends State<MyChartScreen> {
                       print("yaaaaaaaaa");
                       getChartData();
                     },
-                    icon: Icon(Icons.refresh_outlined))
+                    icon: Icon(Icons.refresh_outlined)),
+                IconButton(
+                    onPressed: () {
+                      setState(() {
+                        getLocalChartData();
+                      });
+                    },
+                    icon: Icon(Icons.update))
               ],
               leading: IconButton(
                   onPressed: () => context.pop(),
