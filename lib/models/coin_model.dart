@@ -93,7 +93,7 @@ class CoinModel {
       'id': id,
       'symbol': symbol,
       'name': name,
-      'image': image,
+      //'image': image,
       'currentPrice': currentPrice.toString(),
       'marketCap': marketCap.toString(),
       'marketCapRank': marketCapRank.toString(),

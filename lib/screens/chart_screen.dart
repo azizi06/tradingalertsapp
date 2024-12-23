@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stocksalertapp/components/my_IconButton.dart';
+import 'package:stocksalertapp/components/my_button.dart';
 import 'package:stocksalertapp/components/my_coinInfo.dart';
+import 'package:stocksalertapp/helpers/design.dart';
 import 'package:stocksalertapp/models/coin_model.dart';
 import 'package:stocksalertapp/state_management/coin_block/coin_block_provider.dart';
 import 'package:stocksalertapp/state_management/coin_block/coin_state.dart';
@@ -20,6 +23,8 @@ class MyChartScreen extends StatefulWidget {
 class _MyChartScreenState extends State<MyChartScreen> {
   @override
   Widget build(BuildContext context) {
+    Design design = Design(context);
+    
     return BlocBuilder<CoinBlockProvider, CoinState>(
       builder: (context, state) {
         CoinModel? coin;
@@ -70,25 +75,47 @@ class _MyChartScreenState extends State<MyChartScreen> {
                 Tab(text: "info",)
               ]),
             ),
+            
             body: TabBarView(
               children: [
-                SingleChildScrollView(
-                  child: Column(
+               
+                   Column(
                     children: [
-                      Container(
-                        height: 700,
+                      Expanded(
+                        //height: 700,
                         child: Center(
                           child: Text("Coin Chart is Loading"),
                         ),
                       ),
-                     
+                      Card(
+                        
+                        child:Container(
+                          height: 60,
+                          child: Row(
+                            children: [
+                              SizedBox(width: 10,),
+                              MyIconButton(onPressed: ()=>"", color: design.secondary, icon: Icons.alarm_add_rounded,text: "add alert",),
+                            ],
+                          ),
+                        ),
+                      )                
                     ],
                   ),
-                ),
+                
                 SingleChildScrollView(
                   child: Column(
                     children: [
-                       Text("${coin.id} info"),
+                    SizedBox(height: 20,),
+               SizedBox(
+                height: 40,
+                width: double.infinity,
+                child: Row(
+                  children: [
+                    SizedBox(width: 10,),
+                    Text('${coin.id} info',style: TextStyle(fontSize: 25,fontWeight: FontWeight.w600,),textAlign: TextAlign.start,),
+                  ],
+                )),
+                       
                          Wrap(
                   children: coinInfo.map((entry) {
                     return MyCoininfo(
