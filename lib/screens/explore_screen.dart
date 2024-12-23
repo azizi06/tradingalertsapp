@@ -35,9 +35,9 @@ class _MyExplorePageState extends State<MyExplorePage> {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(100),
           child: AppBar(
-            leading: IconButton(
+            actions: [IconButton(
                 onPressed: () => {coinBloC.add(CoinListInitEvent())},
-                icon: Icon(Icons.refresh)),
+                icon: Icon(Icons.refresh)),]
           ),
         ),
         bottomNavigationBar: MyBottomAppBar(),

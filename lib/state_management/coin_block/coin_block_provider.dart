@@ -22,11 +22,11 @@ class CoinBlockProvider extends Bloc<CoinEvent, CoinState> {
           print("\nHooooHaaa");
           print(
               "------------------------------------------------------------------- DATA  END ---------------------------------------------------");
-          int i = 0;
+     
           for (var item in fetchedData) {
             coins.add(CoinModel.fromJson(item));
-            print(i);
-            i += 1;
+           
+           
           }
           print("emiting... ");
           emit(CoinState(coins: coins));
@@ -37,7 +37,10 @@ class CoinBlockProvider extends Bloc<CoinEvent, CoinState> {
         print('Error loading data: $e');
         emit(CoinState(coins: []));
       }
+
+      
     });
+    
   }
 
   Future<List<dynamic>> fetchCoins() async {
