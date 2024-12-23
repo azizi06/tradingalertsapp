@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stocksalertapp/models/theme_enum.dart';
 import 'package:stocksalertapp/screens/alarm_screen.dart';
+import 'package:stocksalertapp/state_management/coin_block/coin_block_provider.dart';
 import 'package:stocksalertapp/state_management/theme_bloc/theme_bloc_provider.dart';
 import 'package:stocksalertapp/state_management/theme_bloc/theme_state.dart';
 import 'util.dart';
@@ -60,6 +61,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => ThemeBlocProvider(),
+        ),
+        BlocProvider(
+          create: (context) => CoinBlockProvider()
         ),
       ],
       child: BlocBuilder<ThemeBlocProvider, ThemeState>(

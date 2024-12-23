@@ -18,18 +18,10 @@ class MyExplorePage extends StatefulWidget {
 
 class _MyExplorePageState extends State<MyExplorePage> {
   @override
-/*   void initState() {
-    final coinBloC = context.read<CoinBlockProvider>();
-    coinBloC.add(CoinListInitEvent());
-    super.initState();
-  } */
-
-  @override
   Widget build(BuildContext context) {
     final coinBloC = context.read<CoinBlockProvider>();
     Design design = Design(context);
-    final List<CoinModel> coins = [];
-
+    List<CoinModel> coins = [];
     return SafeArea(
       child: Scaffold(
         appBar: PreferredSize(
@@ -51,8 +43,7 @@ class _MyExplorePageState extends State<MyExplorePage> {
               listener: (context, state) {
                 if (state.coins.isNotEmpty) {
                   setState(() {
-                    print("Length of coins: ${coins.length}");
-                    coins.addAll(state.coins);
+                    coins = state.coins;
                     print("setState");
                     print("Length of coins: ${coins.length}");
                   });
@@ -60,10 +51,9 @@ class _MyExplorePageState extends State<MyExplorePage> {
               },
               builder: (context, state) {
                 return Expanded(
-                  child: BlocBuilder<CoinBlockProvider, CoinState>(
-                    builder: (context, state) {
-                      return GridView.builder(
-                        itemCount:  state.coins.length,
+                    //height: 400,
+                    child: GridView.builder(
+                        itemCount: 11,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2, // Number of columns in the grid
                           crossAxisSpacing: 5.0, // Spacing between columns
@@ -72,19 +62,14 @@ class _MyExplorePageState extends State<MyExplorePage> {
                         ),
                         itemBuilder: (context, index) {
                           print("in screen YO");
-                        
+                          print(coins.length);
                           return MyStockSquareCard(
-                            id: state.coins[index].id, //coins[index].id,
-                            currentPrice: state.coins[index].currentPrice, //coins[index].currentPrice,
-                            image: state.coins[index].image,
+                            id: coins[index].id,
+                            currentPrice: coins[index].currentPrice,
                           );
-                        },
-                      );
-                    },
-                  ),
-                );
+                        }));
               },
-            ),
+            )
           ],
         ),
       ),

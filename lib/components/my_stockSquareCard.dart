@@ -1,27 +1,62 @@
 import 'package:flutter/material.dart';
 
 class MyStockSquareCard extends StatelessWidget {
-  const MyStockSquareCard({super.key});
+  final String id;
+  final double currentPrice;
+  final String image;
+
+  const MyStockSquareCard({
+    super.key,
+    required this.id,
+    required this.image,
+    required this.currentPrice,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Card.outlined(
-    shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-        side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1),        
-      ),
-   
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: const [
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              "Hello",
-             // style: TextStyle(color: Colors.white, fontSize: 16),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: InkWell(
+        onTap: () => "",
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(7),
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+              width: 2,
             ),
           ),
-        ],
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 20),
+              CircleAvatar(
+                backgroundImage: NetworkImage(image),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  id,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  currentPrice.toString() + " USD",
+                  style: const TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 17,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
