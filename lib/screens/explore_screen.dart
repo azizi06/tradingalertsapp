@@ -43,10 +43,15 @@ class _MyExplorePageState extends State<MyExplorePage> {
         bottomNavigationBar: MyBottomAppBar(),
         body: Column(
           children: [
-            Container(
-              height: 50.0,
-              child: Center(child: Text('Header Section')),
-            ),
+         
+           Row(
+             children: [
+              SizedBox(width: 18,),
+               Text('Coins',style: TextStyle(fontSize: 25,fontWeight: FontWeight.w600,),textAlign: TextAlign.start,),
+             ],
+           ),
+           SizedBox(height: 10,),
+            
             BlocConsumer<CoinBlockProvider, CoinState>(
               listener: (context, state) {
                 if (state.coins.isNotEmpty) {
@@ -77,6 +82,7 @@ class _MyExplorePageState extends State<MyExplorePage> {
                             id: state.coins[index].id, //coins[index].id,
                             currentPrice: state.coins[index].currentPrice, //coins[index].currentPrice,
                             image: state.coins[index].image,
+                            priceColor: (state.coins[index].priceChange24h >= 0)? Colors.green : Colors.red,
                           );
                         },
                       );

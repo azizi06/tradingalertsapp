@@ -87,4 +87,30 @@ class CoinModel {
       //lastUpdated: DateTime.parse(json['last_updated']),
     );
   }
+  
+    Map<String, String> toMap() {
+    return {
+      'id': id,
+      'symbol': symbol,
+      'name': name,
+      'image': image,
+      'currentPrice': currentPrice.toString(),
+      'marketCap': marketCap.toString(),
+      'marketCapRank': marketCapRank.toString(),
+      'fullyDilutedValuation': fullyDilutedValuation.toString(),
+      'totalVolume': totalVolume.toString(),
+      'high24h': high24h.toString(),
+      'low24h': low24h.toString(),
+      'priceChange24h': priceChange24h.toString(),
+      'priceChangePercentage24h': priceChangePercentage24h.toString(),
+      'marketCapChange24h': marketCapChange24h.toString(),
+      'marketCapChangePercentage24h': marketCapChangePercentage24h.toString(),
+      'circulatingSupply': circulatingSupply.toString(),
+      'totalSupply': totalSupply.toString(),
+      'maxSupply': maxSupply.toString(),
+    };
+  }
+
+
+
 }
