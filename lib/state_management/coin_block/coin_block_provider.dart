@@ -13,7 +13,7 @@ class CoinBlockProvider extends Bloc<CoinEvent, CoinState> {
     on<CoinListInitEvent>((event, emit) async {
       final List<CoinModel> coins = [];
       try {
-        final fetchedData = await loadJsonData();
+        final fetchedData = await fetchCoins();
 
         if (fetchedData.isNotEmpty && fetchedData is List) {
           print(

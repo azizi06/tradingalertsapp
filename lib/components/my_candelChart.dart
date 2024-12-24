@@ -26,7 +26,12 @@ class _MyCandelchartState extends State<MyCandelchart> {
   Widget build(BuildContext context) {
     return SfCartesianChart(
       trackballBehavior: _trackballBehavior,
-      zoomPanBehavior: ZoomPanBehavior(enablePinching: true,),
+      zoomPanBehavior: ZoomPanBehavior(
+        enablePanning: true,
+        enablePinching: true,
+         enableMouseWheelZooming: true,
+    enableSelectionZooming: true,
+        ),
       primaryXAxis: DateTimeAxis(),
       series: <CandleSeries>[
         CandleSeries<CandelModel, DateTime>(

@@ -154,8 +154,10 @@ class _MyChartScreenState extends State<MyChartScreen> {
                 actions: [
                   IconButton(
                       onPressed: () {
-                        print("yaaaaaaaaa");
+                        setState(() {
                         getChartData();
+                          
+                        });
                       },
                       icon: Icon(Icons.refresh_outlined)),
                   IconButton(
