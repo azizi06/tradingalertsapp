@@ -9,6 +9,7 @@ import 'package:stocksalertapp/components/my_button.dart';
 import 'package:stocksalertapp/components/my_candelChart.dart';
 import 'package:stocksalertapp/components/my_coinInfo.dart';
 import 'package:stocksalertapp/helpers/design.dart';
+import 'package:stocksalertapp/helpers/routes.dart';
 import 'package:stocksalertapp/models/candel_model.dart';
 import 'package:stocksalertapp/models/coin_model.dart';
 import 'package:stocksalertapp/state_management/coin_block/coin_block_provider.dart';
@@ -141,121 +142,134 @@ class _MyChartScreenState extends State<MyChartScreen> {
               child: Text('Coin with ID ${widget.coinID} not found.'),
             ),
           );
-        }
-        List<MapEntry<String, String>> coinInfo = coin.toMap().entries.toList();
-        return DefaultTabController(
-          length: 2,
-          initialIndex: 1,
-          child: Scaffold(
-            appBar: AppBar(
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      print("yaaaaaaaaa");
-                      getChartData();
-                    },
-                    icon: Icon(Icons.refresh_outlined)),
-                IconButton(
-                    onPressed: () {
-                      setState(() {
-                        getLocalChartData();
-                      });
-                    },
-                    icon: Icon(Icons.update))
-              ],
-              leading: IconButton(
-                  onPressed: () => context.pop(),
-                  icon: Icon(Icons.arrow_back_ios)),
-              title: Row(
-                children: [
-                  CircleAvatar(backgroundImage: NetworkImage(coin.image)),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    coin.id,
-                    style: TextStyle(fontWeight: FontWeight.w400),
-                  ),
+        } else  {
+          // else if coin is not null :
+          List<MapEntry<String, String>> coinInfo =
+              coin.toMap().entries.toList();
+          return DefaultTabController(
+            length: 2,
+            initialIndex: 0,
+            child: Scaffold(
+              appBar: AppBar(
+                actions: [
+                  IconButton(
+                      onPressed: () {
+                        print("yaaaaaaaaa");
+                        getChartData();
+                      },
+                      icon: Icon(Icons.refresh_outlined)),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          getLocalChartData();
+                        });
+                      },
+                      icon: Icon(Icons.update))
                 ],
-              ),
-              bottom: TabBar(tabs: [
-                Tab(
-                  text: "chart",
-                ),
-                Tab(
-                  text: "info",
-                )
-              ]),
-            ),
-            body: TabBarView(
-              children: [
-                Column(
+                leading: IconButton(
+                    onPressed: () => context.pop(),
+                    icon: Icon(Icons.arrow_back_ios)),
+                title: Row(
                   children: [
-                    Expanded(
-                      //height: 700,
-                      child: Center(
-                        child: MyCandelchart(chartData: chartData),
-                      ),
+                    CircleAvatar(backgroundImage: NetworkImage(coin.image)),
+                    SizedBox(
+                      width: 10,
                     ),
-                    Card(
-                      child: Container(
-                        height: 60,
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 10,
-                            ),
-                            MyIconButton(
-                              onPressed: () => "",
-                              color: design.secondary,
-                              icon: Icons.alarm_add_rounded,
-                              text: "add alert",
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
+                    Text(
+                      coin.id,
+                      style: TextStyle(fontWeight: FontWeight.w400),
+                    ),
                   ],
                 ),
-                SingleChildScrollView(
-                  child: Column(
+                bottom: TabBar(tabs: [
+                  Tab(
+                    text: "chart",
+                  ),
+                  Tab(
+                    text: "info",
+                  )
+                ]),
+              ),
+              body: TabBarView(
+                children: [
+                  // chart screen :
+                  Column(
                     children: [
-                      SizedBox(
-                        height: 20,
+                      Expanded(
+                        //height: 700,
+                        child: Center(
+                          child: MyCandelchart(chartData: chartData),
+                        ),
                       ),
-                      SizedBox(
-                          height: 40,
-                          width: double.infinity,
+                      Card(
+                        child: Container(
+                          height: 60,
                           child: Row(
                             children: [
                               SizedBox(
                                 width: 10,
                               ),
-                              Text(
-                                '${coin.id} info',
-                                style: TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                textAlign: TextAlign.start,
+                              MyIconButton(
+                                onPressed: () {
+                                
+                                    context.pushNamed(Routes.routeAddAlert,
+                                        queryParameters: {
+                                          "coinID": coin?.id,
+                                          "coinImage": coin?.image,
+                                        });
+                                  },
+                                
+                                color: design.secondary,
+                                icon: Icons.alarm_add_rounded,
+                                text: "add alert",
                               ),
                             ],
-                          )),
-                      Wrap(
-                        children: coinInfo.map((entry) {
-                          return MyCoininfo(
-                            item: entry.key,
-                            value: entry.value,
-                          );
-                        }).toList(),
-                      ),
+                          ),
+                        ),
+                      )
                     ],
                   ),
-                )
-              ],
+                  // info screen :
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                            height: 40,
+                            width: double.infinity,
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  '${coin.id} info',
+                                  style: TextStyle(
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  textAlign: TextAlign.start,
+                                ),
+                              ],
+                            )),
+                        Wrap(
+                          children: coinInfo.map((entry) {
+                            return MyCoininfo(
+                              item: entry.key,
+                              value: entry.value,
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        );
+          );
+        }
       },
     );
   }

@@ -3,9 +3,11 @@ class Routes {
   static const String _routeExplore = "ExplorePage";
   static const String _routeAlarm = "ExploreAlarm";
   static const String _routeCoinChart = "CoinChart";
+  static const String _routeAddAlert = "AddAlert";
   static const String _routeLogin = "LoginPage";
   static const String _routeSignUp = "SignupPage";
 
+  static String get routeAddAlert => _routeAddAlert;
   static String get routeAlarm => _routeAlarm;
   static String get routeHome => _routeHome;
   static String get routeExplore => _routeExplore;
