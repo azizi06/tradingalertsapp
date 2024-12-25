@@ -22,7 +22,7 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/',
       name: Routes.routeHome,// pour recuperer le nom du route
-      builder: (context, state) => MyHomePage(),
+      builder: (context, state) => Home(),
     ),
     GoRoute(
       path: '/' + Routes.routeExplore,
