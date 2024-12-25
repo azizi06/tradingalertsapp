@@ -37,15 +37,14 @@ class _MyExplorePageState extends State<MyExplorePage> {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(100),
           child: AppBar(
-            leading: IconButton(
+            actions: [IconButton(
                 onPressed: () => {coinBloC.add(CoinListInitEvent())},
-                icon: Icon(Icons.refresh)),
+                icon: Icon(Icons.refresh)),]
           ),
         ),
         bottomNavigationBar: MyBottomAppBar(),
         body: Column(
           children: [
-            // ignore: sized_box_for_whitespace
             Container(
               height: 50.0,
               child: Center(child: Text('Header Section')),
@@ -84,6 +83,7 @@ class _MyExplorePageState extends State<MyExplorePage> {
                             id: state.coins[index].id, //coins[index].id,
                             currentPrice: state.coins[index].currentPrice, //coins[index].currentPrice,
                             image: state.coins[index].image,
+                            priceColor: (state.coins[index].priceChange24h >= 0)? Colors.green : Colors.red,
                           );
                         },
                       );
