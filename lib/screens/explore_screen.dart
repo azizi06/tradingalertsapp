@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// ignore: unused_import
 import 'package:stocksalertapp/components/my_IconButton.dart';
 import 'package:stocksalertapp/components/my_bottomAppBar.dart';
 import 'package:stocksalertapp/components/my_stockSquareCard.dart';
@@ -27,6 +28,7 @@ class _MyExplorePageState extends State<MyExplorePage> {
   @override
   Widget build(BuildContext context) {
     final coinBloC = context.read<CoinBlockProvider>();
+    // ignore: unused_local_variable
     Design design = Design(context);
     final List<CoinModel> coins = [];
 
@@ -43,6 +45,7 @@ class _MyExplorePageState extends State<MyExplorePage> {
         bottomNavigationBar: MyBottomAppBar(),
         body: Column(
           children: [
+            // ignore: sized_box_for_whitespace
             Container(
               height: 50.0,
               child: Center(child: Text('Header Section')),
@@ -51,9 +54,12 @@ class _MyExplorePageState extends State<MyExplorePage> {
               listener: (context, state) {
                 if (state.coins.isNotEmpty) {
                   setState(() {
+                    // ignore: avoid_print
                     print("Length of coins: ${coins.length}");
                     coins.addAll(state.coins);
+                    // ignore: avoid_print
                     print("setState");
+                    // ignore: avoid_print
                     print("Length of coins: ${coins.length}");
                   });
                 }
@@ -71,6 +77,7 @@ class _MyExplorePageState extends State<MyExplorePage> {
                           childAspectRatio: 1, // Aspect ratio of each item
                         ),
                         itemBuilder: (context, index) {
+                          // ignore: avoid_print
                           print("in screen YO");
                         
                           return MyStockSquareCard(

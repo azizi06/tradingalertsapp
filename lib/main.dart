@@ -19,14 +19,16 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/',
       name: Routes.routeHome,// pour recuperer le nom du route
-      builder: (context, state) => MyHomePage(),
+      builder: (context, state) => Home(),
     ),
     GoRoute(
+      // ignore: prefer_interpolation_to_compose_strings
       path: '/'+Routes.routeExplore,
       name: Routes.routeExplore,
       builder: (context, state) => MyExplorePage(),
     ),
     GoRoute(
+      // ignore: prefer_interpolation_to_compose_strings
       path: '/'+Routes.routeAlarm,
       name: Routes.routeAlarm,
       builder: (context, state) => MyAlarmPage(),
@@ -36,6 +38,8 @@ final GoRouter _router = GoRouter(
       path: '/test',
       name: "test",
       builder: (context, state) => MyTestPage(),
+
+    
     ),
 
     //GoRoute( path: '/login', name: Routes.routeLogin, builder: (context, state) => LoginPage(), ),
@@ -53,6 +57,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     final brightness = View.of(context).platformDispatcher.platformBrightness;
     //TextTheme textTheme = Theme.of(context).textTheme;
     TextTheme textTheme = createTextTheme(context, "Roboto Flex", "Roboto");
@@ -69,6 +74,7 @@ class MyApp extends StatelessWidget {
       child: BlocBuilder<ThemeBlocProvider, ThemeState>(
         
         builder: (context, state) {
+       // ignore: no_leading_underscores_for_local_identifiers
        final Map<ThemeType,ThemeData> _themes = {
             ThemeType.light : theme.light(),
             ThemeType.dark : theme.dark(),

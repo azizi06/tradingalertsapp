@@ -47,6 +47,8 @@ dependencies:
   sizer: ^3.0.5
   syncfusion_flutter_charts: ^28.1.35
   google_fonts: ^6.2.1
+  http: ^1.2.2
+  chart_sparkline: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -74,7 +76,9 @@ flutter:
   assets:
       - assets/images/
       - assets/fonts/ 
-      - assets/data/ 
+      - assets/data/
+      - assets/image/
+      - assets/icons/ 
 
     
 
