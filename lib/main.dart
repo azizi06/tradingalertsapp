@@ -22,15 +22,15 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/',
       name: Routes.routeHome,// pour recuperer le nom du route
-      builder: (context, state) => Home(),
+      builder: (context, state) => MyHomePage(),
     ),
     GoRoute(
-      path: '/'+Routes.routeExplore,
+      path: '/' + Routes.routeExplore,
       name: Routes.routeExplore,
       builder: (context, state) => MyExplorePage(),
     ),
     GoRoute(
-      path: '/'+Routes.routeAlarm,
+      path: '/' + Routes.routeAlarm,
       name: Routes.routeAlarm,
       builder: (context, state) => MyAlarmPage(),
     ),
@@ -87,10 +87,10 @@ class MyApp extends StatelessWidget {
       ],
       child: BlocBuilder<ThemeBlocProvider, ThemeState>(
         builder: (context, state) {
-       final Map<ThemeType,ThemeData> _themes = {
-            ThemeType.light : theme.light(),
-            ThemeType.dark : theme.dark(),
-            ThemeType.lightMediumContrast : theme.lightMediumContrast(),
+          final Map<ThemeType, ThemeData> _themes = {
+            ThemeType.light: theme.light(),
+            ThemeType.dark: theme.dark(),
+            ThemeType.lightMediumContrast: theme.lightMediumContrast(),
           };
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
