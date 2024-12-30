@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:stocksalertapp/models/alert_model.dart';
 
-class FirebaseService {
+class FirestoreService{
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> addAlert(AlertModel alert) async {

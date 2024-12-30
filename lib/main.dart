@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stocksalertapp/api/firebase_messaging_service.dart';
+import 'package:stocksalertapp/services/firebase_messaging_service.dart';
 import 'package:stocksalertapp/models/coin_model.dart';
 import 'package:stocksalertapp/models/theme_enum.dart';
 import 'package:stocksalertapp/screens/addAlert_screen.dart';

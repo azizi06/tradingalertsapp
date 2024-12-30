@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:stocksalertapp/api/firebase_messaging_service.dart';
+import 'package:stocksalertapp/services/firebase_messaging_service.dart';
 import 'package:stocksalertapp/components/my_IconButton.dart';
 import 'package:stocksalertapp/components/my_textfield.dart';
 import 'package:stocksalertapp/helpers/design.dart';
