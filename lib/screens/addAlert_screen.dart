@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stocksalertapp/components/my_IconButton.dart';
+import 'package:stocksalertapp/components/my_textfield.dart';
 import 'package:stocksalertapp/helpers/design.dart';
+import 'package:stocksalertapp/models/alert_model.dart';
 
 class MyAddalertPage extends StatefulWidget {
   final String coinID;
@@ -15,7 +17,6 @@ class MyAddalertPage extends StatefulWidget {
 
 class _MyAddalertPageState extends State<MyAddalertPage> {
   String selectedChoice = "";
-  final List<String> choices = ["Choice 1", "Choice 2", "Choice 3", "Choice 4"];
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +44,7 @@ class _MyAddalertPageState extends State<MyAddalertPage> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            SizedBox(height: 60,),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextWidgetWithBottomSheet(
@@ -54,11 +56,38 @@ class _MyAddalertPageState extends State<MyAddalertPage> {
                 },
               ),
             ),
+            SizedBox(height: 30,),
+
+           Padding(
+  padding: const EdgeInsets.all(16.0),
+  child: Row(
+    children: [
+      Expanded(
+        child: MyTextField(
+          hintText: "",
+          myController: TextEditingController(),
+          myIcon: Icon(Icons.euro),
+          isObscure: false,
+        ),
+      ),
+      SizedBox(width: 8.0), // Adds spacing between the text field and the button
+      MyIconButton(
+        onPressed: () => "",
+        color: design.secondary,
+        icon: Icons.refresh_rounded,
+      ),
+    ],
+  ),
+),
+
+            SizedBox(height: 30,),
+              
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: MyIconButton(
                 onPressed: () {
                   if (selectedChoice.isNotEmpty) {
+                    //AlertModel newAlert = AlertModel(coinID: widget.coinID, type: type, coinPrice: coinPrice)
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Alert added for: $selectedChoice'),
@@ -98,7 +127,8 @@ class TextWidgetWithBottomSheet extends StatefulWidget {
 }
 
 class _TextWidgetWithBottomSheetState extends State<TextWidgetWithBottomSheet> {
-  final List<String> choices = ["Choice 1", "Choice 2", "Choice 3", "Choice 4"];
+  final List<String> choices = ["Price is over", "Price is below", "24H change is over", "24H change is below"];
+
   late String selectedChoice;
 
   @override

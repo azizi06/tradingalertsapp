@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stocksalertapp/api/firebase_messaging_api.dart';
 import 'package:stocksalertapp/models/coin_model.dart';
 import 'package:stocksalertapp/models/theme_enum.dart';
 import 'package:stocksalertapp/screens/addAlert_screen.dart';
@@ -16,12 +17,15 @@ import 'package:stocksalertapp/screens/home_screen.dart';
 import 'package:stocksalertapp/screens/test_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 final GoRouter _router = GoRouter(
   initialLocation: '/test',
   routes: [
     GoRoute(
       path: '/',
-      name: Routes.routeHome,// pour recuperer le nom du route
+      name: Routes.routeHome, // pour recuperer le nom du route
       builder: (context, state) => Home(),
     ),
     GoRoute(
@@ -38,34 +42,36 @@ final GoRouter _router = GoRouter(
       path: "/" + Routes.routeCoinChart,
       name: Routes.routeCoinChart,
       builder: (context, state) {
-           
-         final String coinID =  state.uri.queryParameters['coinID']!;
-        return  MyChartScreen(coinID : coinID);
-      },    
+        final String coinID = state.uri.queryParameters['coinID']!;
+        return MyChartScreen(coinID: coinID);
+      },
     ),
     GoRoute(
       path: "/" + Routes.routeAddAlert,
       name: Routes.routeAddAlert,
       builder: (context, state) {
-         final String coinID =  state.uri.queryParameters['coinID']!;
-         final String coinImage =  state.uri.queryParameters['coinImage']!;
-        return  MyAddalertPage(coinID: coinID, coinImage: coinImage);
-      },    
+        final String coinID = state.uri.queryParameters['coinID']!;
+        final String coinImage = state.uri.queryParameters['coinImage']!;
+        return MyAddalertPage(coinID: coinID, coinImage: coinImage);
+      },
     ),
     GoRoute(
       path: '/test',
       name: "test",
       builder: (context, state) => MyTestPage(),
-
-    
     ),
 
     //GoRoute( path: '/login', name: Routes.routeLogin, builder: (context, state) => LoginPage(), ),
     //GoRoute( path: '/signup', name: Routes.routeSignUp, builder: (context, state) => SignupPage(), ),
   ],
 );
-
-void main() {
+//  cd5curUZSzmCPqUJAHU1w1:APA91bGD_FuixaxeWuanLLVbIhjyvEaVCJSJVUGhYK1-S8HjXyYxIR7ipwUlbM8nifHFL3fFubcCRVu1RVXEg0Jhs5yqd-79qLq3vy61LgkvqI9MDkiTe80
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await FirebaseMessagingApi().initialize();
   runApp(const MyApp());
 }
 
