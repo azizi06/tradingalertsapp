@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stocksalertapp/api/firebase_messaging_service.dart';
 import 'package:stocksalertapp/components/my_IconButton.dart';
 import 'package:stocksalertapp/components/my_textfield.dart';
 import 'package:stocksalertapp/helpers/design.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:stocksalertapp/models/alert_model.dart';
 
 class MyAddalertPage extends StatefulWidget {
@@ -17,6 +20,7 @@ class MyAddalertPage extends StatefulWidget {
 
 class _MyAddalertPageState extends State<MyAddalertPage> {
   String selectedChoice = "";
+  
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +48,9 @@ class _MyAddalertPageState extends State<MyAddalertPage> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 60,),
+            SizedBox(
+              height: 60,
+            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextWidgetWithBottomSheet(
@@ -56,32 +62,47 @@ class _MyAddalertPageState extends State<MyAddalertPage> {
                 },
               ),
             ),
-            SizedBox(height: 30,),
-
-           Padding(
-  padding: const EdgeInsets.all(16.0),
-  child: Row(
-    children: [
-      Expanded(
-        child: MyTextField(
-          hintText: "",
-          myController: TextEditingController(),
-          myIcon: Icon(Icons.euro),
-          isObscure: false,
-        ),
-      ),
-      SizedBox(width: 8.0), // Adds spacing between the text field and the button
-      MyIconButton(
-        onPressed: () => "",
-        color: design.secondary,
-        icon: Icons.refresh_rounded,
-      ),
-    ],
-  ),
-),
-
-            SizedBox(height: 30,),
-              
+            SizedBox(
+              height: 30,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: MyTextField(
+                      hintText: "",
+                      myController: TextEditingController(),
+                      myIcon: Icon(Icons.euro),
+                      isObscure: false,
+                    ),
+                  ),
+                  SizedBox(
+                      width :8.0), 
+                  MyIconButton(
+                    onPressed: () => "",
+                    color: design.secondary,
+                    icon: Icons.refresh_rounded,
+                  ),
+                 
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 30,
+            ),
+             Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: MyTextField(
+                      hintText: "value",
+                      myController: TextEditingController(),
+                      myIcon: Icon(Icons.numbers),
+                      isObscure: false,
+                    ),
+                  ),
+              SizedBox(
+              height: 30,
+            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: MyIconButton(
@@ -123,11 +144,17 @@ class TextWidgetWithBottomSheet extends StatefulWidget {
   });
 
   @override
-  _TextWidgetWithBottomSheetState createState() => _TextWidgetWithBottomSheetState();
+  _TextWidgetWithBottomSheetState createState() =>
+      _TextWidgetWithBottomSheetState();
 }
 
 class _TextWidgetWithBottomSheetState extends State<TextWidgetWithBottomSheet> {
-  final List<String> choices = ["Price is over", "Price is below", "24H change is over", "24H change is below"];
+  final List<String> choices = [
+    "Price is over",
+    "Price is below",
+    "24H change is over",
+    "24H change is below"
+  ];
 
   late String selectedChoice;
 
