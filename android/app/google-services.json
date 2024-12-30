@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:637337114062:android:7bede9a2a269e9cc34879f",
+        "mobilesdk_app_id": "1:637337114062:android:6f4318ed8be102ad34879f",
         "android_client_info": {
-          "package_name": "com.tradingalerts.app"
+          "package_name": "com.example.stocksalertapp"
         }
       },
       "oauth_client": [],

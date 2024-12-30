@@ -52,7 +52,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyD_hWIPT8DRc-Il21w8F7hk5xoB2ir3EF8',
-    appId: '1:637337114062:android:7bede9a2a269e9cc34879f',
+    appId: '1:637337114062:android:6f4318ed8be102ad34879f',
     messagingSenderId: '637337114062',
     projectId: 'tradingalerts-3e0d7',
     storageBucket: 'tradingalerts-3e0d7.firebasestorage.app',
