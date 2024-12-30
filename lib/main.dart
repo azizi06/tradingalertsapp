@@ -16,6 +16,9 @@ import 'package:stocksalertapp/screens/home_screen.dart';
 import 'package:stocksalertapp/screens/test_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 final GoRouter _router = GoRouter(
   initialLocation: '/test',
   routes: [
@@ -65,7 +68,11 @@ final GoRouter _router = GoRouter(
   ],
 );
 
-void main() {
+void main()async {
+  WidgetsFlutterBinding.ensureInitialized();
+await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);
   runApp(const MyApp());
 }
 
