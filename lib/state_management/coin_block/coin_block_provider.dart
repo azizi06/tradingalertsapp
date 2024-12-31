@@ -16,13 +16,7 @@ class CoinBlockProvider extends Bloc<CoinEvent, CoinState> {
         final fetchedData = await fetchCoins();
 
         if (fetchedData.isNotEmpty && fetchedData is List) {
-          print(
-              "------------------------------------------------------------------- DATA START ---------------------------------------------------");
-          print(fetchedData);
-          print("\nHooooHaaa");
-          print(
-              "------------------------------------------------------------------- DATA  END ---------------------------------------------------");
-     
+         
           for (var item in fetchedData) {
             coins.add(CoinModel.fromJson(item));
            

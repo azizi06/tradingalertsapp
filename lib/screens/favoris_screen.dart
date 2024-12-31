@@ -210,146 +210,176 @@ class _FavouritePageState extends State<FavouritePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () => context.pop(),
-            icon: Icon(Icons.arrow_back_ios),
-          ),
-        title: const Text("Mes Coins Favoris"),
-        //backgroundColor: Colors.blue[600],
-        actions: [
-          // Dropdown de tri
-          DropdownButton<String>(
-            value: _selectedSortOption,
-          //  dropdownColor: Colors.blue[600],
-          //  style: TextStyle(color: Colors.white),
-            underline: Container(),
-            icon: Icon(Icons.sort),
-            onChanged: (String? newValue) {
-              if (newValue != null) {
-                _sortCoins(newValue);
-              }
-            },
-            items: [
-              // Option de tri par prix croissant
-              DropdownMenuItem(
-                value: 'price_asc',
-                child: Text("Trier par Prix (Croissant)"),
+    return DefaultTabController(
+            length: 1,
+            initialIndex: 0,
+      child: Scaffold(
+        
+        appBar: PreferredSize(
+          preferredSize:  Size.fromHeight(150),
+          child: AppBar(
+            leading: IconButton(
+                onPressed: () => context.pop(),
+                icon: Icon(Icons.arrow_back_ios),
               ),
-              // Option de tri par prix décroissant
-              DropdownMenuItem(
-                value: 'price_desc',
-                child: Text("Trier par Prix (Décroissant)"),
+            title: const Text("Mes Coins Favoris"),
+            //backgroundColor: Colors.blue[600],
+            actions: [
+              // Dropdown de tri
+              DropdownButton<String>(
+                value: _selectedSortOption,
+              //  dropdownColor: Colors.blue[600],
+              //  style: TextStyle(color: Colors.white),
+                underline: Container(),
+                icon: Icon(Icons.sort),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    _sortCoins(newValue);
+                  }
+                },
+                items: [
+                  // Option de tri par prix croissant
+                  DropdownMenuItem(
+                    value: 'price_asc',
+                    child: Text("Trier par Prix (Croissant)"),
+                  ),
+                  // Option de tri par prix décroissant
+                  DropdownMenuItem(
+                    value: 'price_desc',
+                    child: Text("Trier par Prix (Décroissant)"),
+                  ),
+                  // Option de tri par variation 24h croissante
+                  DropdownMenuItem(
+                    value: 'change_24h_asc',
+                    child: Text("Trier par Variation 24h (Croissant)"),
+                  ),
+                  // Option de tri par variation 24h décroissante
+                  DropdownMenuItem(
+                    value: 'change_24h_desc',
+                    child: Text("Trier par Variation 24h (Décroissant)"),
+                  ),
+                  // Option de tri par nom croissant (A-Z)
+                  DropdownMenuItem(
+                    value: 'name_asc',
+                    child: Text("Trier par Nom (A-Z)"),
+                  ),
+                  // Option de tri par nom décroissant (Z-A)
+                  DropdownMenuItem(
+                    value: 'name_desc',
+                    child: Text("Trier par Nom (Z-A)"),
+                  ),
+                ],
               ),
-              // Option de tri par variation 24h croissante
-              DropdownMenuItem(
-                value: 'change_24h_asc',
-                child: Text("Trier par Variation 24h (Croissant)"),
-              ),
-              // Option de tri par variation 24h décroissante
-              DropdownMenuItem(
-                value: 'change_24h_desc',
-                child: Text("Trier par Variation 24h (Décroissant)"),
-              ),
-              // Option de tri par nom croissant (A-Z)
-              DropdownMenuItem(
-                value: 'name_asc',
-                child: Text("Trier par Nom (A-Z)"),
-              ),
-              // Option de tri par nom décroissant (Z-A)
-              DropdownMenuItem(
-                value: 'name_desc',
-                child: Text("Trier par Nom (Z-A)"),
+              // Bouton de rafraîchissement pour actualiser les prix
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: _fetchCoinPrices,
               ),
             ],
-          ),
-          // Bouton de rafraîchissement pour actualiser les prix
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _fetchCoinPrices,
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48.0),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: "Rechercher un coin...",
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(48.0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
+                        hintText: "Rechercher un coin...",
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      
+                    ),
+                    TabBar(tabs: [
+                      Tab(
+                        text: "All Coins",
+                      ),
+                      Tab(
+                        text: "Favoris",
+                      ),
+                      
+                    ]),
+                  ],
                 ),
-                filled: true,
-                fillColor: Colors.white,
               ),
             ),
           ),
         ),
-      ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : ReorderableListView(
-              onReorder: _onReorder,
-              children: _filteredCoins.map((coin) {
-                return ListTile(
-                  key: Key(coin['name']),
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(coin['image']),
-                    backgroundColor: Colors.transparent,
-                  ),
-                  title: Text(coin['name']),
-                  subtitle: Text(
-                     "Prix"// "Prix: ${_formatPrice(coin['price'])}\nVariation 24h: ${coin['change_24h'].toStringAsFixed(2)}%"
-                      ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      _confirmRemoveCoin(coin['name']);
-                    },
-                  ),
-                );
-              }).toList(),
+        body: TabBarView(
+
+          children: [
+            Center(child: Text("soon"),),
+
+            Container(
+              child: _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : ReorderableListView(
+                      onReorder: _onReorder,
+                      children: _filteredCoins.map((coin) {
+                        return ListTile(
+                          key: Key(coin['name']),
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(coin['image']),
+                            backgroundColor: Colors.transparent,
+                          ),
+                          title: Text(coin['name']),
+                          subtitle: Text(
+                             "Prix"// "Prix: ${_formatPrice(coin['price'])}\nVariation 24h: ${coin['change_24h'].toStringAsFixed(2)}%"
+                              ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              _confirmRemoveCoin(coin['name']);
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    ),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final newCoin = await showDialog<String>(
-            context: context,
-            builder: (context) {
-              final TextEditingController _newCoinController =
-                  TextEditingController();
-              return AlertDialog(
-                title: Text("Ajouter un nouveau coin"),
-                content: TextField(
-                  controller: _newCoinController,
-                  decoration: InputDecoration(hintText: "Entrez le nom du coin"),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(null);
-                    },
-                    child: Text("Annuler"),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            final newCoin = await showDialog<String>(
+              context: context,
+              builder: (context) {
+                final TextEditingController _newCoinController =
+                    TextEditingController();
+                return AlertDialog(
+                  title: Text("Ajouter un nouveau coin"),
+                  content: TextField(
+                    controller: _newCoinController,
+                    decoration: InputDecoration(hintText: "Entrez le nom du coin"),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context)
-                          .pop(_newCoinController.text.toLowerCase());
-                    },
-                    child: Text("Ajouter"),
-                  ),
-                ],
-              );
-            },
-          );
-          if (newCoin != null) {
-            await _addCoin(newCoin);
-          }
-        },
-        child: Icon(Icons.add),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(null);
+                      },
+                      child: Text("Annuler"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pop(_newCoinController.text.toLowerCase());
+                      },
+                      child: Text("Ajouter"),
+                    ),
+                  ],
+                );
+              },
+            );
+            if (newCoin != null) {
+              await _addCoin(newCoin);
+            }
+          },
+          child: Icon(Icons.add),
+        ),
       ),
     );
   }

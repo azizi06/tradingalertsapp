@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stocksalertapp/screens/settings_screen.dart';
 import 'package:stocksalertapp/services/firebase_messaging_service.dart';
 import 'package:stocksalertapp/models/coin_model.dart';
 import 'package:stocksalertapp/models/theme_enum.dart';
@@ -27,9 +28,13 @@ import 'package:stocksalertapp/screens/favoris_screen.dart';
 
 
 final GoRouter _router = GoRouter(
-  initialLocation: '/test',
+  initialLocation: '/'+Routes.routeExplore,
   routes: [
-   
+      GoRoute(
+      path: '/'+Routes.routeSettings,
+      name: Routes.routeSettings, // pour recuperer le nom du route
+      builder: (context, state) => MySettingsPage(),
+    ),
     GoRoute(
       path: '/'+Routes.routeMyHomePage,
       name: Routes.routeMyHomePage, // pour recuperer le nom du route

@@ -6,6 +6,8 @@ class Routes {
   static const String _routeFavourite = "FavouritePage";
   static const String _routeAlarm = "ExploreAlarm";
   static const String _routeAddAlert = "AddAlert";
+  static const String _routeSettings = "Settings";
+
 
   static const String _routeCoinChart = "/coinChart";
 
@@ -16,6 +18,7 @@ class Routes {
   static String get routeFavourite => _routeFavourite;
   static String get routeAlarm => _routeAlarm;
   static String get routeAddAlert => _routeAddAlert; 
-
   static String get routeCoinChart => _routeCoinChart;
+
+  static String get routeSettings => _routeSettings;
 }

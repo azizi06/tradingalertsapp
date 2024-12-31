@@ -17,7 +17,7 @@ class MyBottomAppBar extends StatelessWidget {
               IconButton(onPressed: () => context.goNamed(Routes.routeExplore), icon: Icon(Icons.search_rounded)),
               IconButton(onPressed: () => context.pushNamed(Routes.routeFavourite), icon: Icon(Icons.heart_broken_outlined)),
               IconButton(onPressed: () => context.pushNamed(Routes.routeAlarm), icon: Icon(Icons.alarm)),
-              IconButton(onPressed: () => context.go('/test'), icon: Icon(Icons.heart_broken,)),
+              IconButton(onPressed: () => context.pushNamed(Routes.routeSettings), icon: Icon(Icons.heart_broken,)),
             ],
           ),
         );

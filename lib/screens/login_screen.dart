@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:go_router/go_router.dart'; // Importez GoRouter
+import 'package:go_router/go_router.dart';
+import 'package:stocksalertapp/helpers/design.dart';
+import 'package:stocksalertapp/helpers/routes.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -9,18 +11,20 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController(text: "email@email.com");
+  final TextEditingController passwordController = TextEditingController(text: "Pass@word1");
 
   bool _passwordVisible = false;
 
-  final emailPatternRules = r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
+  final emailPatternRules =
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
   final passwordPatternRules = r'^(?=.*[A-Z])(?=.*?[0-9])(?=.*?[ @#\&*~]).{8,}';
 
   @override
   Widget build(BuildContext context) {
+    Design design = Design(context);
     return Scaffold(
-      backgroundColor: Colors.grey[900],
+      backgroundColor: design.background, //Colors.grey[900],
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -44,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Text(
                         "Login",
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.roboto(
                           color: Colors.white,
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
@@ -53,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(height: 10),
                       Text(
                         "Login to start making alarm to trading crypto.",
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.roboto(
                           color: Colors.white.withOpacity(0.8),
                           fontSize: 16,
                         ),
@@ -62,10 +66,12 @@ class _LoginPageState extends State<LoginPage> {
                       // Email field
                       TextFormField(
                         controller: emailController,
-                        style: const TextStyle(color: Color(0xFFB4B4B4)), // White-grey color
+                        style: const TextStyle(
+                            color: Color(0xFFB4B4B4)), // White-grey color
                         decoration: InputDecoration(
                           labelText: "Email",
-                          labelStyle: const TextStyle(color: Color(0xFFB4B4B4)), // White-grey color
+                          labelStyle: const TextStyle(
+                              color: Color(0xFFB4B4B4)), // White-grey color
                           filled: true,
                           fillColor: Colors.grey[800],
                           border: OutlineInputBorder(
@@ -90,11 +96,13 @@ class _LoginPageState extends State<LoginPage> {
                       // Password field
                       TextFormField(
                         controller: passwordController,
-                        style: const TextStyle(color: Color(0xFFB4B4B4)), // White-grey color
+                        style: const TextStyle(
+                            color: Color(0xFFB4B4B4)), // White-grey color
                         obscureText: !_passwordVisible,
                         decoration: InputDecoration(
                           labelText: "Password",
-                          labelStyle: const TextStyle(color: Color(0xFFB4B4B4)), // White-grey color
+                          labelStyle: const TextStyle(
+                              color: Color(0xFFB4B4B4)), // White-grey color
                           filled: true,
                           fillColor: Colors.grey[800],
                           border: OutlineInputBorder(
@@ -122,8 +130,9 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         validator: (value) {
                           final passwordRegExp = RegExp(passwordPatternRules);
-                          if (value == null || !passwordRegExp.hasMatch(value)) {
-                            return 'Password must have at least 8 characters, 1 uppercase letter, 1 number, and 1 special character';
+                          if (value == null ||
+                              !passwordRegExp.hasMatch(value)) {
+                            return 'Password must have at least 8 characters,\n 1 uppercase letter, 1 number, and 1 special character';
                           }
                           return null;
                         },
@@ -135,7 +144,8 @@ class _LoginPageState extends State<LoginPage> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor: Colors.blue[600],
+                            backgroundColor:
+                                design.secondary, //Colors.blue[600],
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -145,8 +155,10 @@ class _LoginPageState extends State<LoginPage> {
                               print("Email: ${emailController.text}");
                               print("Password: ${passwordController.text}");
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Login successful!')),
+                                const SnackBar(
+                                    content: Text('Login successful!')),
                               );
+                              context.goNamed(Routes.routeExplore);
                             }
                           },
                           child: Text(

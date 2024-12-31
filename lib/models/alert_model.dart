@@ -25,11 +25,13 @@ class AlertModel {
   /// The Firebase Cloud Messaging token for notifications.
   final String fcmToken;
 
+  final DateTime createdAt;
   AlertModel({
     required this.coinID,
     required this.type,
     required this.coinPrice,
     required this.value,
+    required this.createdAt,
     required this.fcmToken,
     required this.isNotified,
   });
@@ -42,18 +44,20 @@ class AlertModel {
         'value': value,
         'isNotified': isNotified,
         'fcmToken': fcmToken,
+        'createdAt': createdAt.toIso8601String(),
       };
 
   /// Creates an instance of AlertModel from a JSON object.
   factory AlertModel.fromJson(Map<String, dynamic> json) {
     return AlertModel(
       coinID: json['coinID'],
-      type: StockAlertType.values.firstWhere(
-          (e) => e.toString().split('.').last == json['type']),
+      type: StockAlertType.values
+          .firstWhere((e) => e.toString().split('.').last == json['type']),
       coinPrice: json['coinPrice'],
       value: json['value'],
       fcmToken: json['fcmToken'],
       isNotified: json['isNotified'],
+      createdAt: DateTime.parse(json['createdAt']),
     );
   }
 }
