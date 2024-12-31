@@ -17,29 +17,22 @@ import 'package:stocksalertapp/screens/home_screen.dart';
 import 'package:stocksalertapp/screens/test_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-<<<<<<< Updated upstream
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-=======
 
 import 'package:stocksalertapp/screens/signup_screen.dart';
 import 'package:stocksalertapp/screens/login_screen.dart';
 import 'package:stocksalertapp/screens/favoris_screen.dart';
 
->>>>>>> Stashed changes
+
 
 final GoRouter _router = GoRouter(
   initialLocation: '/test',
   routes: [
     GoRoute(
-      path: '/',
-<<<<<<< Updated upstream
-      name: Routes.routeHome, // pour recuperer le nom du route
+      path: '/'+Routes.routeMyHomePage,
+      name: Routes.routeMyHomePage, // pour recuperer le nom du route
       builder: (context, state) => Home(),
-=======
-      name: Routes.routeHome,
-      builder: (context, state) => MyHomePage(),
->>>>>>> Stashed changes
     ),
     GoRoute(
       path: '/' + Routes.routeExplore,
@@ -107,11 +100,7 @@ class MyApp extends StatelessWidget {
   @override
   
   Widget build(BuildContext context) {
-<<<<<<< Updated upstream
     // ignore: unused_local_variable
-=======
-    
->>>>>>> Stashed changes
     final brightness = View.of(context).platformDispatcher.platformBrightness;
     //TextTheme textTheme = Theme.of(context).textTheme;
     TextTheme textTheme = createTextTheme(context, "Roboto Flex", "Roboto");

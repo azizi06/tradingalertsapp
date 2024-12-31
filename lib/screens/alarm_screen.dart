@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
-<<<<<<< Updated upstream
-// ignore: unused_import
-import 'package:go_router/go_router.dart';
-import 'package:stocksalertapp/components/my_bottomAppBar.dart';
-=======
 import 'package:http/http.dart' as http;
 import 'dart:convert';
->>>>>>> Stashed changes
 
 class AlarmPage extends StatefulWidget {
   const AlarmPage({Key? key}) : super(key: key);
@@ -29,15 +23,19 @@ class _AlarmPageState extends State<AlarmPage>
 
   // Récupérer le prix actuel via l'API
   Future<double?> getCoinPrice(String coin) async {
-    final response = await http.get(Uri.parse(
-        'https://api.coingecko.com/api/v3/simple/price?ids=$coin&vs_currencies=usd'));
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      if (data.containsKey(coin)) {
-        return data[coin]['usd'];
+    try {
+      final response = await http.get(Uri.parse(
+          'https://api.coingecko.com/api/v3/simple/price?ids=$coin&vs_currencies=usd'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data.containsKey(coin)) {
+          return data[coin]['usd'];
+        }
       }
+    } catch (e) {
+      debugPrint("Erreur lors de la récupération du prix : $e");
     }
-    return null; // Si le coin n'existe pas
+    return null;
   }
 
   // Ajouter une alerte
@@ -67,7 +65,7 @@ class _AlarmPageState extends State<AlarmPage>
 
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       isScrollControlled: true,
@@ -82,18 +80,18 @@ class _AlarmPageState extends State<AlarmPage>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
+                    const Text(
                       "Créer une Alarme",
                       style: TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextField(
                       controller: coinController,
                       decoration: InputDecoration(
                         labelText: "Nom du Coin (ex: bitcoin)",
                         suffixIcon: IconButton(
-                          icon: Icon(Icons.search),
+                          icon: const Icon(Icons.search),
                           onPressed: () async {
                             final coin = coinController.text.trim().toLowerCase();
                             final price = await getCoinPrice(coin);
@@ -122,15 +120,15 @@ class _AlarmPageState extends State<AlarmPage>
                           ),
                         ),
                       ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextField(
                       controller: priceController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: "Prix Cible (USD)",
                       ),
                       keyboardType: TextInputType.number,
                     ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: () {
                         final coin = coinController.text.trim().toLowerCase();
@@ -141,7 +139,7 @@ class _AlarmPageState extends State<AlarmPage>
                             !(coinValidationMessage?.contains("Prix actuel") ??
                                 false)) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                               content: Text(
                                   "Veuillez vérifier le nom du coin et rechercher son prix."),
                             ),
@@ -154,14 +152,14 @@ class _AlarmPageState extends State<AlarmPage>
                           Navigator.of(context).pop();
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                               content: Text(
                                   "Veuillez vérifier les informations saisies."),
                             ),
                           );
                         }
                       },
-                      child: Text("Créer une Alarme"),
+                      child: const Text("Créer une Alarme"),
                     ),
                   ],
                 ),
@@ -177,10 +175,10 @@ class _AlarmPageState extends State<AlarmPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Alarmes"),
+        title: const Text("Alarmes"),
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
+          tabs: const [
             Tab(text: "Actives"),
             Tab(text: "Historique"),
           ],
@@ -191,7 +189,7 @@ class _AlarmPageState extends State<AlarmPage>
         children: [
           // Onglet des alertes actives
           activeAlerts.isEmpty
-              ? Center(child: Text("Aucune alarme active."))
+              ? const Center(child: Text("Aucune alarme active."))
               : ListView.builder(
                   itemCount: activeAlerts.length,
                   itemBuilder: (context, index) {
@@ -205,7 +203,7 @@ class _AlarmPageState extends State<AlarmPage>
                       subtitle: Text(
                           "Ajoutée le ${alert['createdAt'].toString().split(' ')[0]}"),
                       trailing: IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
+                        icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () => _removeAlert(index),
                       ),
                     );
@@ -213,7 +211,7 @@ class _AlarmPageState extends State<AlarmPage>
                 ),
           // Onglet historique des alertes
           alertHistory.isEmpty
-              ? Center(child: Text("Aucune alarme dans l'historique."))
+              ? const Center(child: Text("Aucune alarme dans l'historique."))
               : ListView.builder(
                   itemCount: alertHistory.length,
                   itemBuilder: (context, index) {
@@ -233,7 +231,7 @@ class _AlarmPageState extends State<AlarmPage>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddAlertDialog(context),
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         tooltip: "Créer une Alarme",
       ),
     );

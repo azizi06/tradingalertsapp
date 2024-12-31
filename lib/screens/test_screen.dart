@@ -51,7 +51,7 @@ class _MyTestPageState extends State<MyTestPage> {
           MyButton(onPressed: () => {themeBloc.add(ThemeChangeEvent(ThemeType.lightMediumContrast))}, text: "light2", color: design.error),
           SizedBox(height: 10,),
           MyIconButton(
-              onPressed: () => {context.goNamed(Routes.routeHome)}, color: design.error, icon: Icons.headphones,text: "Home",),
+              onPressed: () => {context.goNamed(Routes.routeMyHomePage)}, color: design.error, icon: Icons.headphones,text: "Home",),
           SizedBox(
               height: 40,
               width: 180,
