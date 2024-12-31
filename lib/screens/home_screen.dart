@@ -20,6 +20,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< Updated upstream
     double myHeight = MediaQuery.of(context).size.height;
     double myWidth = MediaQuery.of(context).size.width;
 
@@ -184,10 +185,57 @@ class _HomeState extends State<Home> {
               )
             ],
           ),
+=======
+    return Scaffold(
+      bottomNavigationBar: MyBottomAppBar(), // Barre de navigation personnalisée
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              "Home",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20), // Espacement entre les widgets
+
+            // Bouton pour naviguer vers SignupPage
+            ElevatedButton(
+              onPressed: () {
+                GoRouter.of(context).go('/signup'); // Navigue vers SignupPage
+              },
+              child: const Text("Go to Signup Page"),
+            ),
+
+            // Bouton pour naviguer vers LoginPage
+            TextButton(
+              onPressed: () {
+                GoRouter.of(context).go('/login'); // Navigue vers LoginPage
+              },
+              child: const Text(
+                "Already have an account? Login",
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+
+            // Bouton pour naviguer vers Favoris
+            ElevatedButton.icon(
+              onPressed: () {
+                GoRouter.of(context).go('/favorites'); // Navigue vers Favoris
+              },
+              icon: const Icon(Icons.favorite),
+              label: const Text("Go to Favourites"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red, // Couleur personnalisée
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              ),
+            ),
+          ],
+>>>>>>> Stashed changes
         ),
       ),
     );
   }
+<<<<<<< Updated upstream
 
   bool isRefreching = true;
 
@@ -218,4 +266,6 @@ class _HomeState extends State<Home> {
       print(response.statusCode);
     }
   }
+=======
+>>>>>>> Stashed changes
 }

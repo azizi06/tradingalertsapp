@@ -17,16 +17,29 @@ import 'package:stocksalertapp/screens/home_screen.dart';
 import 'package:stocksalertapp/screens/test_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+<<<<<<< Updated upstream
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+=======
+
+import 'package:stocksalertapp/screens/signup_screen.dart';
+import 'package:stocksalertapp/screens/login_screen.dart';
+import 'package:stocksalertapp/screens/favoris_screen.dart';
+
+>>>>>>> Stashed changes
 
 final GoRouter _router = GoRouter(
   initialLocation: '/test',
   routes: [
     GoRoute(
       path: '/',
+<<<<<<< Updated upstream
       name: Routes.routeHome, // pour recuperer le nom du route
       builder: (context, state) => Home(),
+=======
+      name: Routes.routeHome,
+      builder: (context, state) => MyHomePage(),
+>>>>>>> Stashed changes
     ),
     GoRoute(
       path: '/' + Routes.routeExplore,
@@ -36,7 +49,7 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/' + Routes.routeAlarm,
       name: Routes.routeAlarm,
-      builder: (context, state) => MyAlarmPage(),
+      builder: (context, state) => AlarmPage(),
     ),
     GoRoute(
       path: "/" + Routes.routeCoinChart,
@@ -61,8 +74,21 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => MyTestPage(),
     ),
 
-    //GoRoute( path: '/login', name: Routes.routeLogin, builder: (context, state) => LoginPage(), ),
-    //GoRoute( path: '/signup', name: Routes.routeSignUp, builder: (context, state) => SignupPage(), ),
+    GoRoute(
+      path: '/signup', 
+      name: Routes.routeSignUp, 
+      builder: (context, state) => SignupPage(),
+    ),
+    GoRoute(
+      path: '/login', 
+      name: Routes.routeLogin, 
+      builder: (context, state) => LoginPage(), 
+    ),
+    GoRoute(
+          path: '/favorites',
+          name: Routes.routeFavourite,
+          builder: (context, state) => FavouritePage(),
+        ),
   ],
 );
 //  cd5curUZSzmCPqUJAHU1w1:APA91bGD_FuixaxeWuanLLVbIhjyvEaVCJSJVUGhYK1-S8HjXyYxIR7ipwUlbM8nifHFL3fFubcCRVu1RVXEg0Jhs5yqd-79qLq3vy61LgkvqI9MDkiTe80
@@ -76,10 +102,16 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
+  //# const MyApp({super.key});
   @override
+  
   Widget build(BuildContext context) {
+<<<<<<< Updated upstream
     // ignore: unused_local_variable
+=======
+    
+>>>>>>> Stashed changes
     final brightness = View.of(context).platformDispatcher.platformBrightness;
     //TextTheme textTheme = Theme.of(context).textTheme;
     TextTheme textTheme = createTextTheme(context, "Roboto Flex", "Roboto");
