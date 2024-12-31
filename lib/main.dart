@@ -29,6 +29,7 @@ import 'package:stocksalertapp/screens/favoris_screen.dart';
 final GoRouter _router = GoRouter(
   initialLocation: '/test',
   routes: [
+   
     GoRoute(
       path: '/'+Routes.routeMyHomePage,
       name: Routes.routeMyHomePage, // pour recuperer le nom du route

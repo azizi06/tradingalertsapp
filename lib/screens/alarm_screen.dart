@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:go_router/go_router.dart';
+
 
 class AlarmPage extends StatefulWidget {
   const AlarmPage({Key? key}) : super(key: key);
@@ -173,66 +175,74 @@ class _AlarmPageState extends State<AlarmPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Alarmes"),
-        bottom: TabBar(
+    return DefaultTabController(
+               length: 1,
+            initialIndex: 0,
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+              onPressed: () => context.pop(),
+              icon: Icon(Icons.arrow_back_ios),
+            ),
+          title: const Text("Alarmes"),
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: const [
+              Tab(text: "Actives"),
+              Tab(text: "Historique"),
+            ],
+          ),
+        ),
+        body: TabBarView(
           controller: _tabController,
-          tabs: const [
-            Tab(text: "Actives"),
-            Tab(text: "Historique"),
+          children: [
+            // Onglet des alertes actives
+            activeAlerts.isEmpty
+                ? const Center(child: Text("Aucune alarme active."))
+                : ListView.builder(
+                    itemCount: activeAlerts.length,
+                    itemBuilder: (context, index) {
+                      final alert = activeAlerts[index];
+                      return ListTile(
+                        leading: CircleAvatar(
+                          child: Text(alert["coin"][0].toUpperCase()),
+                        ),
+                        title: Text(
+                            "${alert['coin'].toUpperCase()} - ${alert['targetPrice']} USD"),
+                        subtitle: Text(
+                            "Ajoutée le ${alert['createdAt'].toString().split(' ')[0]}"),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _removeAlert(index),
+                        ),
+                      );
+                    },
+                  ),
+            // Onglet historique des alertes
+            alertHistory.isEmpty
+                ? const Center(child: Text("Aucune alarme dans l'historique."))
+                : ListView.builder(
+                    itemCount: alertHistory.length,
+                    itemBuilder: (context, index) {
+                      final alert = alertHistory[index];
+                      return ListTile(
+                        leading: CircleAvatar(
+                          child: Text(alert["coin"][0].toUpperCase()),
+                        ),
+                        title: Text(
+                            "${alert['coin'].toUpperCase()} - ${alert['targetPrice']} USD"),
+                        subtitle: Text(
+                            "Ajoutée le ${alert['createdAt'].toString().split(' ')[0]}"),
+                      );
+                    },
+                  ),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          // Onglet des alertes actives
-          activeAlerts.isEmpty
-              ? const Center(child: Text("Aucune alarme active."))
-              : ListView.builder(
-                  itemCount: activeAlerts.length,
-                  itemBuilder: (context, index) {
-                    final alert = activeAlerts[index];
-                    return ListTile(
-                      leading: CircleAvatar(
-                        child: Text(alert["coin"][0].toUpperCase()),
-                      ),
-                      title: Text(
-                          "${alert['coin'].toUpperCase()} - ${alert['targetPrice']} USD"),
-                      subtitle: Text(
-                          "Ajoutée le ${alert['createdAt'].toString().split(' ')[0]}"),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () => _removeAlert(index),
-                      ),
-                    );
-                  },
-                ),
-          // Onglet historique des alertes
-          alertHistory.isEmpty
-              ? const Center(child: Text("Aucune alarme dans l'historique."))
-              : ListView.builder(
-                  itemCount: alertHistory.length,
-                  itemBuilder: (context, index) {
-                    final alert = alertHistory[index];
-                    return ListTile(
-                      leading: CircleAvatar(
-                        child: Text(alert["coin"][0].toUpperCase()),
-                      ),
-                      title: Text(
-                          "${alert['coin'].toUpperCase()} - ${alert['targetPrice']} USD"),
-                      subtitle: Text(
-                          "Ajoutée le ${alert['createdAt'].toString().split(' ')[0]}"),
-                    );
-                  },
-                ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddAlertDialog(context),
-        child: const Icon(Icons.add),
-        tooltip: "Créer une Alarme",
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => _showAddAlertDialog(context),
+          child: const Icon(Icons.add),
+          tooltip: "Créer une Alarme",
+        ),
       ),
     );
   }

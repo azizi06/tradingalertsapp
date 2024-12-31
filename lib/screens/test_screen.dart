@@ -49,7 +49,11 @@ class _MyTestPageState extends State<MyTestPage> {
           SizedBox(height: 10,),
         
           MyButton(onPressed: () => {themeBloc.add(ThemeChangeEvent(ThemeType.lightMediumContrast))}, text: "light2", color: design.error),
-          SizedBox(height: 10,),
+          MyButton(onPressed: () => {context.pushNamed(Routes.routeLogin)}, text: "Login", color: design.error),
+          MyButton(onPressed: () => {context.pushNamed(Routes.routeSignUp)}, text: "SignUp", color: design.primary),
+
+          
+        
           MyIconButton(
               onPressed: () => {context.goNamed(Routes.routeMyHomePage)}, color: design.error, icon: Icons.headphones,text: "Home",),
           SizedBox(
@@ -61,12 +65,7 @@ class _MyTestPageState extends State<MyTestPage> {
                 icon: Icons.settings,
                 text: "Settings",
               )),
-          Center(
-              child: Text(
-            "Azizi",
-            style: TextStyle(
-                fontFamily: 'Roboto', height: 20, fontWeight: FontWeight.w500),
-          )),
+          
         ],
       ),
     );
