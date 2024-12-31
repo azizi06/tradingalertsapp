@@ -40,11 +40,6 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
-    defaultConfig {
-        ...
-        minSdkVersion 19
-    }
-    
 }
 
 flutter {

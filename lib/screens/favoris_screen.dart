@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:go_router/go_router.dart';
 
 class FavouritePage extends StatefulWidget {
   @override
@@ -210,17 +211,22 @@ class _FavouritePageState extends State<FavouritePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () => context.pop(),
+            icon: Icon(Icons.arrow_back_ios),
+          ),
         title: const Text("Mes Coins Favoris"),
-        backgroundColor: Colors.blue[600],
+        //backgroundColor: Colors.blue[600],
         actions: [
           // Dropdown de tri
           DropdownButton<String>(
             value: _selectedSortOption,
-            dropdownColor: Colors.blue[600],
-            style: TextStyle(color: Colors.white),
+          //  dropdownColor: Colors.blue[600],
+          //  style: TextStyle(color: Colors.white),
             underline: Container(),
-            icon: Icon(Icons.sort, color: Colors.white),
+            icon: Icon(Icons.sort),
             onChanged: (String? newValue) {
               if (newValue != null) {
                 _sortCoins(newValue);
@@ -297,7 +303,8 @@ class _FavouritePageState extends State<FavouritePage> {
                   ),
                   title: Text(coin['name']),
                   subtitle: Text(
-                      "Prix: ${_formatPrice(coin['price'])}\nVariation 24h: ${coin['change_24h'].toStringAsFixed(2)}%"),
+                     "Prix"// "Prix: ${_formatPrice(coin['price'])}\nVariation 24h: ${coin['change_24h'].toStringAsFixed(2)}%"
+                      ),
                   trailing: IconButton(
                     icon: Icon(Icons.delete, color: Colors.red),
                     onPressed: () {
