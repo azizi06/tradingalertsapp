@@ -52,6 +52,16 @@ dependencies:
   firebase_messaging: ^15.1.6
   cloud_firestore: ^5.6.0
 
+  shared_preferences: ^2.0.16
+  flutter_local_notifications: ^15.0.0
+  
+ 
+  
+
+  
+  
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -80,7 +90,8 @@ flutter:
       - assets/fonts/ 
       - assets/data/
       - assets/image/
-      - assets/icons/ 
+      - assets/icons/        
+      - assets/crypto_background.jpg
 
     
 

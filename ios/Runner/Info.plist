@@ -45,5 +45,22 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Cette app nécessite l'accès à votre position pour des alertes de prix basées sur la localisation.</string>
+
+	<key>UIUserNotificationUsageDescription</key>
+	<string>Cette app souhaite vous envoyer des notifications lorsque les alertes de prix sont déclenchées.</string>
+
+	<key>UIUserNotificationAlertStyle</key>
+	<string>banner</string>
+
+	<key>UIUserNotificationSound</key>
+	<string>default</string>
+	</dict>
 </plist>
