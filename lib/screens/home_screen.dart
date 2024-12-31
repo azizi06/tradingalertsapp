@@ -95,6 +95,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
               
+              
               // Affichage du solde du portefeuille
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: myWidth * 0.07),
