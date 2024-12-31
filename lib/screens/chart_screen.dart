@@ -102,6 +102,7 @@ class _MyChartScreenState extends State<MyChartScreen> {
   @override
   Widget build(BuildContext context) {
     Design design = Design(context);
+    print("azer");
 
     return BlocBuilder<CoinBlockProvider, CoinState>(
       builder: (context, state) {
