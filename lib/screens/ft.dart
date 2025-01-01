@@ -1,201 +1,412 @@
-/* import 'package:flutter/material.dart'; 
-import 'package:stocksalertapp/helpers/design.dart';
+/* import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stocksalertapp/models/coin_model.dart';
 
-class MySettingsPage extends StatefulWidget {
-  const MySettingsPage({super.key});
+import 'package:stocksalertapp/screens/market_screen.dart';
+import 'package:stocksalertapp/state_management/coin_block/coin_block_provider.dart';
+import 'package:stocksalertapp/state_management/coin_block/coin_event.dart';
 
+class FavouritePage extends StatefulWidget {
   @override
-  State<MySettingsPage> createState() => _MySettingsPageState();
+  _FavouritePageState createState() => _FavouritePageState();
 }
 
-class _MySettingsPageState extends State<MySettingsPage> {
-  // Parameters for theme and language
-  String _selectedLanguage = 'English';
-  bool _isDarkTheme = false;
-  double _rateUse = 0.5;
+class _FavouritePageState extends State<FavouritePage> {
+  List<String> _coins = [
+    "bitcoin",
+    "ethereum",
+    "ripple",
+    "litecoin",
+    "cardano",
+    "polkadot",
+    "binancecoin",
+    "dogecoin",
+    "solana",
+    "pepecoin" // Ajout de PepeCoin
+  ];
+
+  List<Map<String, dynamic>> _coinData = [];
+  List<Map<String, dynamic>> _filteredCoins = [];
+  final TextEditingController _searchController = TextEditingController();
+  bool _isLoading = false;
+  String _selectedSortOption = 'price_asc'; // Critère de tri par défaut
+
+  // Fonction pour formater le prix (ex : $2.5K pour 2500)
+  String _formatPrice(double price) {
+    if (price < 1) {
+      return "\$${price.toStringAsFixed(6)}";
+    } else {
+      return "\$${price.toStringAsFixed(2)}";
+    }
+  }
+
+  Future<void> _fetchCoinPrices() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final response = await http.get(Uri.parse(
+          "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${_coins.join(',')}&order=market_cap_desc&per_page=100&page=1&sparkline=false"));
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        setState(() {
+          _coinData = data.map((coin) {
+            return {
+              "name": coin['id'],
+              "price": coin['current_price'] ?? 0.0,
+              "market_cap": coin['market_cap'] ?? 0.0,
+              "change_24h": coin['price_change_percentage_24h'] ?? 0.0,
+              "image": coin['image'] ?? '', // URL du logo
+            };
+          }).toList();
+          _filteredCoins = List.from(_coinData);
+        });
+        //_sortCoins(_selectedSortOption); // Trier après le chargement
+      } else {
+        throw Exception("Failed to load prices");
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Erreur lors du chargement des prix.")),
+      );
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _loadFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String>? savedFavorites = prefs.getStringList('favorites');
+    if (savedFavorites != null) {
+      setState(() {
+        _coins = savedFavorites;
+      });
+    }
+    await _fetchCoinPrices();
+  }
+
+  Future<void> _saveFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('favorites', _coins);
+  }
+
+  void _filterCoins(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredCoins = List.from(_coinData);
+      } else {
+        _filteredCoins = _coinData
+            .where((coin) =>
+                coin['name'].toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
+  void _sortCoins(String criterion,CoinBlockProvider coinBloc) {
+    setState(() {
+      _selectedSortOption =
+          criterion; // Mettre à jour l'option de tri sélectionnée
+      if (criterion =='price_asc') {
+        _filteredCoins.sort((a, b) => a['price'].compareTo(b['price']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.priceAsc));
+
+      } else if (criterion == 'price_desc') {
+        _filteredCoins.sort((a, b) => b['price'].compareTo(a['price']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.priceDesc));
+
+      } else if (criterion == 'change_24h_asc') {
+        _filteredCoins.sort((a, b) => a['change_24h'].compareTo(b['change_24h']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.change24hAsc));
+
+      } else if (criterion == 'change_24h_desc') {
+        _filteredCoins
+            .sort((a, b) => b['change_24h'].compareTo(a['change_24h']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.change24hDesc));
+
+      } else if (criterion == 'name_asc') {
+        _filteredCoins.sort((a, b) => a['name'].compareTo(b['name']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.nameAsc));
+
+      } else if (criterion == 'name_desc') {
+        _filteredCoins.sort((a, b) => b['name'].compareTo(a['name']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.nameDesc));
+
+      }
+    });
+  }
+
+  Future<void> _addCoin(String coin) async {
+    if (!_coins.contains(coin)) {
+      // Vérifie si le coin existe dans l'API
+      final response = await http.get(Uri.parse(
+          "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=$coin"));
+      if (response.statusCode == 200 && json.decode(response.body).isNotEmpty) {
+        setState(() {
+          _coins.add(coin);
+        });
+        await _saveFavorites();
+        await _fetchCoinPrices();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text("Le coin $coin n'existe pas ou est invalide.")),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("$coin est déjà dans vos favoris.")),
+      );
+    }
+  }
+
+  void _confirmRemoveCoin(String coin) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Confirmer la suppression"),
+          content:
+              Text("Êtes-vous sûr de vouloir supprimer $coin de vos favoris ?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Annuler"),
+            ),
+            TextButton(
+              onPressed: () {
+                _removeCoin(coin);
+                Navigator.of(context).pop();
+              },
+              child: Text("Supprimer"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _removeCoin(String coin) async {
+    if (_coins.contains(coin)) {
+      setState(() {
+        _coins.remove(coin);
+      });
+      await _saveFavorites();
+      await _fetchCoinPrices();
+    }
+  }
+
+  void _onReorder(int oldIndex, int newIndex) async {
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+    setState(() {
+      final item = _coins.removeAt(oldIndex);
+      _coins.insert(newIndex, item);
+    });
+    await _saveFavorites();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorites();
+    _searchController.addListener(() {
+      _filterCoins(_searchController.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    Design design = Design(context);
-    return SafeArea(
+    final coinBloc = context.read<CoinBlockProvider>();
+
+    return DefaultTabController(
+      length: 2,
+      initialIndex: 0,
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: design.primary,
-          title: const Text("Account"),
-          leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back),
-          ),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipPath(
-                clipper: MyCustomCurvedEdges(),
-                child: Container(
-                  color: design.primary,
-                  child: SizedBox(
-                    height: 150,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 40,
-                            backgroundColor: Colors.white,
-                            child: Icon(
-                              Icons.person,
-                              size: 40,
-                              color: design.primary,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            "John Doe",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(150),
+          child: AppBar(
+            leading: IconButton(
+              onPressed: () => context.pop(),
+              icon: Icon(Icons.arrow_back_ios),
+            ),
+            title: const Text("Mes Coins Favoris"),
+            //backgroundColor: Colors.blue[600],
+            actions: [
+              // Dropdown de tri
+              DropdownButton<String>(
+                value: _selectedSortOption,
+                //  dropdownColor: Colors.blue[600],
+                //  style: TextStyle(color: Colors.white),
+                underline: Container(),
+                icon: Icon(Icons.sort),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    
+
+                    _sortCoins(newValue,coinBloc);
+                  }
+                },
+
+                items: [
+                  // Option de tri par prix croissant
+                  DropdownMenuItem(
+                    value: 'price_asc',
+                    child: Text("Trier par Prix (Croissant)"),
                   ),
-                ),
+                  // Option de tri par prix décroissant
+                  DropdownMenuItem(
+                    value: 'price_desc',
+                    child: Text("Trier par Prix (Décroissant)"),
+                  ),
+                  // Option de tri par variation 24h croissante
+                  DropdownMenuItem(
+                    value: 'change_24h_asc',
+                    child: Text("Trier par Variation 24h (Croissant)"),
+                  ),
+                  // Option de tri par variation 24h décroissante
+                  DropdownMenuItem(
+                    value: 'change_24h_desc',
+                    child: Text("Trier par Variation 24h (Décroissant)"),
+                  ),
+                  // Option de tri par nom croissant (A-Z)
+                  DropdownMenuItem(
+                    value: 'name_asc',
+                    child: Text("Trier par Nom (A-Z)"),
+                  ),
+                  // Option de tri par nom décroissant (Z-A)
+                  DropdownMenuItem(
+                    value: 'name_desc',
+                    child: Text("Trier par Nom (Z-A)"),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              // Language selection
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Language",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    DropdownButton<String>(
-                      value: _selectedLanguage,
-                      items: const [
-                        DropdownMenuItem(value: 'English', child: Text('English')),
-                        DropdownMenuItem(value: 'French', child: Text('French')),
-                        DropdownMenuItem(value: 'Spanish', child: Text('Spanish')),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedLanguage = value!;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(),
-              // Theme toggle
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Dark Theme",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Switch(
-                      value: _isDarkTheme,
-                      onChanged: (value) {
-                        setState(() {
-                          _isDarkTheme = value;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(),
-              // Rate use slider
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Rate Use",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Slider(
-                      value: _rateUse,
-                      min: 0.0,
-                      max: 1.0,
-                      divisions: 10,
-                      label: (_rateUse * 100).toStringAsFixed(0) + '%',
-                      onChanged: (value) {
-                        setState(() {
-                          _rateUse = value;
-                        });
-                      },
-                    ),
-                  ],
-                ),
+              // Bouton de rafraîchissement pour actualiser les prix
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: _fetchCoinPrices,
               ),
             ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(48.0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
+                        hintText: "Rechercher un coin...",
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                    ),
+                    TabBar(tabs: [
+                      Tab(
+                        text: "All Coins",
+                      ),
+                      Tab(
+                        text: "Favoris",
+                      ),
+                    ]),
+                  ],
+                ),
+              ),
+            ),
           ),
+        ),
+        body: TabBarView(
+          children: [
+            //Center(child: Text("soon"),),
+            MarketScreen(),
+
+            Container(
+              child: _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : ReorderableListView(
+                      onReorder: _onReorder,
+                      children: _filteredCoins.map((coin) {
+                        return ListTile(
+                          key: Key(coin['name']),
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(coin['image']),
+                            backgroundColor: Colors.transparent,
+                          ),
+                          title: Text(coin['name']),
+                          subtitle: Text(
+                              "Prix" // "Prix: ${_formatPrice(coin['price'])}\nVariation 24h: ${coin['change_24h'].toStringAsFixed(2)}%"
+                              ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              _confirmRemoveCoin(coin['name']);
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    ),
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            final newCoin = await showDialog<String>(
+              context: context,
+              builder: (context) {
+                final TextEditingController _newCoinController =
+                    TextEditingController();
+                return AlertDialog(
+                  title: Text("Ajouter un nouveau coin"),
+                  content: TextField(
+                    controller: _newCoinController,
+                    decoration:
+                        InputDecoration(hintText: "Entrez le nom du coin"),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(null);
+                      },
+                      child: Text("Annuler"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pop(_newCoinController.text.toLowerCase());
+                      },
+                      child: Text("Ajouter"),
+                    ),
+                  ],
+                );
+              },
+            );
+            if (newCoin != null) {
+              await _addCoin(newCoin);
+            }
+          },
+          child: Icon(Icons.add),
         ),
       ),
     );
-  }
-}
-
-class MyCustomCurvedEdges extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-
-    // Start at the bottom-left corner
-    path.lineTo(0, size.height);
-
-    // First curve
-    final firstCurveStart = Offset(0, size.height - 20);
-    final firstCurveEnd = Offset(size.width / 3, size.height - 20);
-    path.quadraticBezierTo(
-      firstCurveStart.dx,
-      firstCurveStart.dy,
-      (firstCurveStart.dx + firstCurveEnd.dx) / 2,
-      (firstCurveStart.dy + firstCurveEnd.dy) / 2,
-    );
-
-    // Second curve
-    final secondCurveStart = Offset(size.width / 3, size.height - 20);
-    final secondCurveEnd = Offset(size.width * 2 / 3, size.height - 20);
-    path.quadraticBezierTo(
-      secondCurveStart.dx,
-      secondCurveStart.dy,
-      (secondCurveStart.dx + secondCurveEnd.dx) / 2,
-      (secondCurveStart.dy + secondCurveEnd.dy) / 2,
-    );
-
-    // Third curve
-    final thirdCurveStart = Offset(size.width * 2 / 3, size.height - 20);
-    final thirdCurveEnd = Offset(size.width, size.height);
-    path.quadraticBezierTo(
-      thirdCurveStart.dx,
-      thirdCurveStart.dy,
-      thirdCurveEnd.dx,
-      thirdCurveEnd.dy,
-    );
-
-    // Close the path at the top-right corner
-    path.lineTo(size.width, 0);
-    path.close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
-    return true; // Reclip the path when the widget updates
   }
 }
  */

@@ -27,11 +27,11 @@ class _MySettingsPageState extends State<MySettingsPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: design.primary,
-          title: Text("Account"),
+          backgroundColor: design.onSurface,
+          title: Text("Account",style: TextStyle(color: Colors.white),),
           leading: IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back,color:  Colors.white,),
           ),
         ),
         body: SingleChildScrollView(
@@ -65,7 +65,7 @@ class _MySettingsPageState extends State<MySettingsPage> {
     return ClipPath(
       clipper: MyCustomCurvedEdges(),
       child: Container(
-        color: design.primary,
+        color: design.onSurface,
         child: SizedBox(
           height: 150,
           child: Center(
