@@ -9,6 +9,7 @@ import 'package:stocksalertapp/models/coin_model.dart';
 import 'package:stocksalertapp/screens/market_screen.dart';
 import 'package:stocksalertapp/state_management/coin_block/coin_block_provider.dart';
 import 'package:stocksalertapp/state_management/coin_block/coin_event.dart';
+import 'package:stocksalertapp/state_management/coin_block/coin_state.dart';
 
 class FavouritePage extends StatefulWidget {
   @override
@@ -29,8 +30,8 @@ class _FavouritePageState extends State<FavouritePage> {
     "pepecoin" // Ajout de PepeCoin
   ];
 
-  List<Map<String, dynamic>> _coinData = [];
-  List<Map<String, dynamic>> _filteredCoins = [];
+  List<CoinModel> _coinData = [];
+  List<CoinModel> _filteredCoins = [];
   final TextEditingController _searchController = TextEditingController();
   bool _isLoading = false;
   String _selectedSortOption = 'price_asc'; // Critère de tri par défaut
@@ -47,35 +48,10 @@ class _FavouritePageState extends State<FavouritePage> {
   Future<void> _fetchCoinPrices() async {
     setState(() {
       _isLoading = true;
-    });
-    try {
-      final response = await http.get(Uri.parse(
-          "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${_coins.join(',')}&order=market_cap_desc&per_page=100&page=1&sparkline=false"));
+      final coinBloC = context.read<CoinBlockProvider>();
+      coinBloC.add(CoinListInitEvent());
+      _filterCoins(_searchController.text);
 
-      if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
-        setState(() {
-          _coinData = data.map((coin) {
-            return {
-              "name": coin['id'],
-              "price": coin['current_price'] ?? 0.0,
-              "market_cap": coin['market_cap'] ?? 0.0,
-              "change_24h": coin['price_change_percentage_24h'] ?? 0.0,
-              "image": coin['image'] ?? '', // URL du logo
-            };
-          }).toList();
-          _filteredCoins = List.from(_coinData);
-        });
-        //_sortCoins(_selectedSortOption); // Trier après le chargement
-      } else {
-        throw Exception("Failed to load prices");
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erreur lors du chargement des prix.")),
-      );
-    }
-    setState(() {
       _isLoading = false;
     });
   }
@@ -103,41 +79,34 @@ class _FavouritePageState extends State<FavouritePage> {
       } else {
         _filteredCoins = _coinData
             .where((coin) =>
-                coin['name'].toLowerCase().contains(query.toLowerCase()))
+                coin.id.toLowerCase().contains(query.toLowerCase()))
             .toList();
       }
     });
   }
 
-  void _sortCoins(String criterion,CoinBlockProvider coinBloc) {
+  void _sortCoins(String criterion, CoinBlockProvider coinBloc) {
     setState(() {
       _selectedSortOption =
           criterion; // Mettre à jour l'option de tri sélectionnée
-      if (criterion =='price_asc') {
-        _filteredCoins.sort((a, b) => a['price'].compareTo(b['price']));
+      if (criterion == 'price_asc') {
+        //_filteredCoins.sort((a, b) => a['price'].compareTo(b['price']));
         coinBloc.add(CoinSortEvent(method: CoinSortingMethod.priceAsc));
-
       } else if (criterion == 'price_desc') {
-        _filteredCoins.sort((a, b) => b['price'].compareTo(a['price']));
+       // _filteredCoins.sort((a, b) => b['price'].compareTo(a['price']));
         coinBloc.add(CoinSortEvent(method: CoinSortingMethod.priceDesc));
-
       } else if (criterion == 'change_24h_asc') {
-        _filteredCoins.sort((a, b) => a['change_24h'].compareTo(b['change_24h']));
+       // _filteredCoins.sort((a, b) => a.priceChangePercentage24h.compareTo(b.priceChangePercentage24h));
         coinBloc.add(CoinSortEvent(method: CoinSortingMethod.change24hAsc));
-
       } else if (criterion == 'change_24h_desc') {
-        _filteredCoins
-            .sort((a, b) => b['change_24h'].compareTo(a['change_24h']));
+        //_filteredCoins.sort((a, b) => b.priceChangePercentage24h.compareTo(a.priceChangePercentage24h));
         coinBloc.add(CoinSortEvent(method: CoinSortingMethod.change24hDesc));
-
       } else if (criterion == 'name_asc') {
-        _filteredCoins.sort((a, b) => a['name'].compareTo(b['name']));
+        //_filteredCoins.sort((a, b) => a['name'].compareTo(b['name']));
         coinBloc.add(CoinSortEvent(method: CoinSortingMethod.nameAsc));
-
       } else if (criterion == 'name_desc') {
-        _filteredCoins.sort((a, b) => b['name'].compareTo(a['name']));
+        //_filteredCoins.sort((a, b) => b['name'].compareTo(a['name']));
         coinBloc.add(CoinSortEvent(method: CoinSortingMethod.nameDesc));
-
       }
     });
   }
@@ -257,9 +226,7 @@ class _FavouritePageState extends State<FavouritePage> {
                 icon: Icon(Icons.sort),
                 onChanged: (String? newValue) {
                   if (newValue != null) {
-                    
-
-                    _sortCoins(newValue,coinBloc);
+                    _sortCoins(newValue, coinBloc);
                   }
                 },
 
@@ -337,33 +304,45 @@ class _FavouritePageState extends State<FavouritePage> {
         body: TabBarView(
           children: [
             //Center(child: Text("soon"),),
-            MarketScreen(),
+            MarketScreen(coins: _filteredCoins,),
 
             Container(
               child: _isLoading
                   ? Center(child: CircularProgressIndicator())
-                  : ReorderableListView(
-                      onReorder: _onReorder,
-                      children: _filteredCoins.map((coin) {
-                        return ListTile(
-                          key: Key(coin['name']),
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(coin['image']),
-                            backgroundColor: Colors.transparent,
-                          ),
-                          title: Text(coin['name']),
-                          subtitle: Text(
-                              "Prix" // "Prix: ${_formatPrice(coin['price'])}\nVariation 24h: ${coin['change_24h'].toStringAsFixed(2)}%"
-                              ),
-                          trailing: IconButton(
-                            icon: Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              _confirmRemoveCoin(coin['name']);
-                            },
-                          ),
-                        );
-                      }).toList(),
-                    ),
+                  : BlocConsumer<CoinBlockProvider, CoinState>(
+                      listener: (context, state) {
+                      setState(() {
+                         _coinData= state.coins;
+                        _filterCoins(_searchController.text);
+                          
+                      });
+                    }, builder: (context, state) {
+                       final _favFilteredCoins = _filteredCoins.where((coin) {
+                        return _coins.contains(coin.id.toLowerCase());
+                      }).toList(); 
+
+                      return ReorderableListView(
+                        onReorder: _onReorder,
+                        children:  _favFilteredCoins.map((coin) {
+                          return ListTile(
+                            key: Key(coin.id),
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(coin.image),
+                              backgroundColor: Colors.transparent,
+                            ),
+                            title: Text(coin.name),
+                            subtitle: Text(
+                                "Prix: ${_formatPrice(coin.currentPrice)}\nVariation 24h: ${coin.priceChange24h.toStringAsFixed(2)}%"),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                _confirmRemoveCoin(coin.name);
+                              },
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    }),
             ),
           ],
         ),

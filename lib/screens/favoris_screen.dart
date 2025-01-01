@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stocksalertapp/models/coin_model.dart';
 
 import 'package:stocksalertapp/screens/market_screen.dart';
+
 import 'package:stocksalertapp/state_management/coin_block/coin_block_provider.dart';
 import 'package:stocksalertapp/state_management/coin_block/coin_event.dart';
 import 'package:stocksalertapp/state_management/coin_block/coin_state.dart';
@@ -50,6 +51,7 @@ class _FavouritePageState extends State<FavouritePage> {
       _isLoading = true;
       final coinBloC = context.read<CoinBlockProvider>();
       coinBloC.add(CoinListInitEvent());
+
       _isLoading = false;
     });
   }
@@ -76,8 +78,8 @@ class _FavouritePageState extends State<FavouritePage> {
         _filteredCoins = List.from(_coinData);
       } else {
         _filteredCoins = _coinData
-            .where((coin) =>
-                coin.id.toLowerCase().contains(query.toLowerCase()))
+            .where(
+                (coin) => coin.id.toLowerCase().contains(query.toLowerCase()))
             .toList();
       }
     });
@@ -91,10 +93,10 @@ class _FavouritePageState extends State<FavouritePage> {
         //_filteredCoins.sort((a, b) => a['price'].compareTo(b['price']));
         coinBloc.add(CoinSortEvent(method: CoinSortingMethod.priceAsc));
       } else if (criterion == 'price_desc') {
-       // _filteredCoins.sort((a, b) => b['price'].compareTo(a['price']));
+        // _filteredCoins.sort((a, b) => b['price'].compareTo(a['price']));
         coinBloc.add(CoinSortEvent(method: CoinSortingMethod.priceDesc));
       } else if (criterion == 'change_24h_asc') {
-       // _filteredCoins.sort((a, b) => a.priceChangePercentage24h.compareTo(b.priceChangePercentage24h));
+        // _filteredCoins.sort((a, b) => a.priceChangePercentage24h.compareTo(b.priceChangePercentage24h));
         coinBloc.add(CoinSortEvent(method: CoinSortingMethod.change24hAsc));
       } else if (criterion == 'change_24h_desc') {
         //_filteredCoins.sort((a, b) => b.priceChangePercentage24h.compareTo(a.priceChangePercentage24h));
@@ -302,22 +304,27 @@ class _FavouritePageState extends State<FavouritePage> {
         body: TabBarView(
           children: [
             //Center(child: Text("soon"),),
-            MarketScreen(coins: _filteredCoins,),
+            MarketScreen(
+              coins: _filteredCoins,
+            ),
 
             Container(
               child: _isLoading
                   ? Center(child: CircularProgressIndicator())
                   : BlocConsumer<CoinBlockProvider, CoinState>(
                       listener: (context, state) {
-                      _coinData = state.coins;
+                      setState(() {
+                        _filteredCoins = state.coins;
+                        _coinData = state.coins;
+                      });
                     }, builder: (context, state) {
-                       final _favFilteredCoins = _filteredCoins.where((coin) {
+                      final _favFilteredCoins = _filteredCoins.where((coin) {
                         return _coins.contains(coin.id.toLowerCase());
-                      }).toList(); 
+                      }).toList();
 
                       return ReorderableListView(
                         onReorder: _onReorder,
-                        children:  _favFilteredCoins.map((coin) {
+                        children: _favFilteredCoins.map((coin) {
                           return ListTile(
                             key: Key(coin.id),
                             leading: CircleAvatar(
