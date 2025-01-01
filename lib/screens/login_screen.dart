@@ -11,8 +11,10 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController emailController = TextEditingController(text: "email@email.com");
-  final TextEditingController passwordController = TextEditingController(text: "Pass@word1");
+  final TextEditingController emailController =
+      TextEditingController(text: "email@email.com");
+  final TextEditingController passwordController =
+      TextEditingController(text: "Pass@word1");
 
   bool _passwordVisible = false;
 
@@ -24,23 +26,40 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     Design design = Design(context);
     return Scaffold(
-      backgroundColor: design.background, //Colors.grey[900],
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Stack(
-              children: [
-                // Image background of crypto
-                Positioned.fill(
-                  child: Opacity(
-                    opacity: 0.2,
-                    child: Image.asset(
-                      'assets/crypto_background.jpg', // Assurez-vous que l'image existe dans le dossier assets
-                      fit: BoxFit.cover,
-                    ),
+      backgroundColor: Colors.grey[900],
+      body: Stack(
+        children: [
+           Positioned.fill(
+                child: Opacity(
+                  opacity: 0.3,
+                  child: Image.asset(
+                    'assets/crypto_background.jpg', // Assurez-vous que l'image existe dans le dossier assets
+                    fit: BoxFit.cover,
                   ),
                 ),
+              ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                SizedBox(height: 60,),
+                SizedBox(
+                  height: 210,
+                  width: double.infinity,
+                  
+                   child:  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       Text("Trading Alerts",style: TextStyle(fontSize: 40,fontWeight: FontWeight.bold , color: Colors.white),),
+                       Text("Stay Up-to-Date",style: TextStyle(fontSize: 10,fontWeight: FontWeight.w300, color: Colors.white),),
+
+
+                     ],
+                   )
+                
+                ),
+               
                 Form(
                   key: _formKey,
                   child: Column(
@@ -56,10 +75,10 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        "Login to start making alarm to trading crypto.",
+                        "Login,and start setting alerts for trading crypto",
                         style: GoogleFonts.roboto(
                           color: Colors.white.withOpacity(0.8),
-                          fontSize: 16,
+                          fontSize: 12,
                         ),
                       ),
                       const SizedBox(height: 30),
@@ -130,8 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         validator: (value) {
                           final passwordRegExp = RegExp(passwordPatternRules);
-                          if (value == null ||
-                              !passwordRegExp.hasMatch(value)) {
+                          if (value == null || !passwordRegExp.hasMatch(value)) {
                             return 'Password must have at least 8 characters,\n 1 uppercase letter, 1 number, and 1 special character';
                           }
                           return null;
@@ -144,8 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor:
-                                design.secondary, //Colors.blue[600],
+                            backgroundColor: design.primary, //Colors.blue[600],
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -155,10 +172,9 @@ class _LoginPageState extends State<LoginPage> {
                               print("Email: ${emailController.text}");
                               print("Password: ${passwordController.text}");
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Login successful!')),
+                                const SnackBar(content: Text('Login successful!')),
                               );
-                              context.goNamed(Routes.routeExplore);
+                              context.goNamed(Routes.routeMyHomePage);
                             }
                           },
                           child: Text(
@@ -166,6 +182,7 @@ class _LoginPageState extends State<LoginPage> {
                             style: GoogleFonts.poppins(
                               fontSize: 16, // Reduced size
                               fontWeight: FontWeight.bold,
+                              color: design.onPrimary,
                             ),
                           ),
                         ),
@@ -190,7 +207,7 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
