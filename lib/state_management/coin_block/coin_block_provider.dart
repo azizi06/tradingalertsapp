@@ -36,7 +36,6 @@ class CoinBlockProvider extends Bloc<CoinEvent, CoinState> {
       try {
         List<CoinModel> sortedCoins = _onSortCoins(method, coins);
         emit(CoinState(coins: sortedCoins));
-
       } catch (e) {
         print('Error loading data: $e');
         emit(CoinState(coins: coins));
@@ -57,12 +56,14 @@ class CoinBlockProvider extends Bloc<CoinEvent, CoinState> {
         // Decode response data (Dio already decodes JSON for you)
         return response.data; // This will be a List<dynamic>
       } else {
-        throw Exception(
-            'Failed to load coins. Status code: ${response.statusCode}');
+        print('Failed to load coins. Status code: ${response.statusCode}');
+        return loadJsonData();
       }
     } catch (e) {
-      print('Failed to load coins: $e');
-      throw Exception('Failed to load coins: $e');
+        print('Failed to load coins. Status code: $e');
+        return loadJsonData();
+      /* print('Failed to load coins: $e');
+      throw Exception('Failed to load coins: $e'); */
     }
   }
 

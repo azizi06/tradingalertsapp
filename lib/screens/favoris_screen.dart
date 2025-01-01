@@ -46,14 +46,28 @@ class _FavouritePageState extends State<FavouritePage> {
     }
   }
 
-  Future<void> _fetchCoinPrices() async {
-    setState(() {
-      _isLoading = true;
+  void _fetchCoinPrices2() {
+    _isLoading = true;
+    final coinBloC = context.read<CoinBlockProvider>();
+    coinBloC.add(CoinListInitEvent());
+
+    _isLoading = false;
+  }
+
+  void _fetchCoinPrices() {
+    _isLoading = true;
+    try {
       final coinBloC = context.read<CoinBlockProvider>();
       coinBloC.add(CoinListInitEvent());
-
+    } catch (e) {
+      // Handle error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text("Erreur lors du chargement des prix des pièces.")),
+      );
+    } finally {
       _isLoading = false;
-    });
+    }
   }
 
   Future<void> _loadFavorites() async {
@@ -64,25 +78,11 @@ class _FavouritePageState extends State<FavouritePage> {
         _coins = savedFavorites;
       });
     }
-    await _fetchCoinPrices();
   }
 
   Future<void> _saveFavorites() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setStringList('favorites', _coins);
-  }
-
-  void _filterCoins(String query) {
-    setState(() {
-      if (query.isEmpty) {
-        _filteredCoins = List.from(_coinData);
-      } else {
-        _filteredCoins = _coinData
-            .where(
-                (coin) => coin.id.toLowerCase().contains(query.toLowerCase()))
-            .toList();
-      }
-    });
   }
 
   void _sortCoins(String criterion, CoinBlockProvider coinBloc) {
@@ -121,7 +121,6 @@ class _FavouritePageState extends State<FavouritePage> {
           _coins.add(coin);
         });
         await _saveFavorites();
-        await _fetchCoinPrices();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -169,7 +168,6 @@ class _FavouritePageState extends State<FavouritePage> {
         _coins.remove(coin);
       });
       await _saveFavorites();
-      await _fetchCoinPrices();
     }
   }
 
@@ -184,12 +182,27 @@ class _FavouritePageState extends State<FavouritePage> {
     await _saveFavorites();
   }
 
+  void _filterCoins(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredCoins = List.from(_coinData);
+      } else {
+        _filteredCoins = _coinData
+            .where(
+                (coin) => coin.id.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _loadFavorites();
+    final coinBloC = context.read<CoinBlockProvider>();
+    coinBloC.add(CoinListInitEvent());
     _searchController.addListener(() {
-      _filterCoins(_searchController.text);
+      setState(() {});
     });
   }
 
@@ -301,51 +314,67 @@ class _FavouritePageState extends State<FavouritePage> {
             ),
           ),
         ),
-        body: TabBarView(
-          children: [
-            //Center(child: Text("soon"),),
-            MarketScreen(
-              coins: _filteredCoins,
-            ),
-
-            Container(
-              child: _isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : BlocConsumer<CoinBlockProvider, CoinState>(
-                      listener: (context, state) {
-                      setState(() {
-                        _filteredCoins = state.coins;
-                        _coinData = state.coins;
-                      });
-                    }, builder: (context, state) {
-                      final _favFilteredCoins = _filteredCoins.where((coin) {
-                        return _coins.contains(coin.id.toLowerCase());
-                      }).toList();
-
-                      return ReorderableListView(
-                        onReorder: _onReorder,
-                        children: _favFilteredCoins.map((coin) {
-                          return ListTile(
-                            key: Key(coin.id),
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(coin.image),
-                              backgroundColor: Colors.transparent,
-                            ),
-                            title: Text(coin.name),
-                            subtitle: Text(
-                                "Prix: ${_formatPrice(coin.currentPrice)}\nVariation 24h: ${coin.priceChange24h.toStringAsFixed(2)}%"),
-                            trailing: IconButton(
-                              icon: Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {
-                                _confirmRemoveCoin(coin.name);
-                              },
-                            ),
+        body: Container(
+          child: _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : BlocConsumer<CoinBlockProvider, CoinState>(
+                  listener: (context, state) {
+                  if (state.coins.isNotEmpty) {
+                    setState(() {
+                      _filteredCoins = state.coins;
+                      _coinData = state.coins;
+                      print("filtered coins : $_filteredCoins");
+                    });
+                  }
+                }, builder: (context, state) {
+                  List<CoinModel> _filteredCoins2 = [];
+                  if (_searchController.text.isEmpty) {
+                    _filteredCoins2 = state.coins;
+                  } else {
+                    _filteredCoins2 = state.coins
+                        .where((coin) => coin.id
+                            .toLowerCase()
+                            .contains(_searchController.text.toLowerCase()))
+                        .toList();
+                  }
+                  return TabBarView(
+                    children: [
+                      MarketScreen(
+                        coins: _filteredCoins2,
+                      ),
+                      Expanded(
+                        child: BlocBuilder<CoinBlockProvider, CoinState>(
+                            builder: (context, state) {
+                          final _favFilteredCoins =
+                              _filteredCoins2.where((coin) {
+                            return _coins.contains(coin.id.toLowerCase());
+                          }).toList();
+                          return ReorderableListView(
+                            onReorder: _onReorder,
+                            children: _favFilteredCoins.map((coin) {
+                              return ListTile(
+                                key: Key(coin.id),
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(coin.image),
+                                  backgroundColor: Colors.transparent,
+                                ),
+                                title: Text(coin.name),
+                                subtitle: Text(
+                                    "Prix: ${_formatPrice(coin.currentPrice)}\nVariation 24h: ${coin.priceChange24h.toStringAsFixed(2)}%"),
+                                trailing: IconButton(
+                                  icon: Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () {
+                                    _confirmRemoveCoin(coin.name);
+                                  },
+                                ),
+                              );
+                            }).toList(),
                           );
-                        }).toList(),
-                      );
-                    }),
-            ),
-          ],
+                        }),
+                      )
+                    ],
+                  );
+                }),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
