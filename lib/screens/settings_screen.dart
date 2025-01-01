@@ -1,5 +1,4 @@
-
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -27,52 +26,60 @@ class _MySettingsPageState extends State<MySettingsPage> {
   Widget build(BuildContext context) {
     Design design = Design(context);
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: design.onSurface,
-          title: Text("Account",style: TextStyle(color: Colors.white),),
-          leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back,color:  Colors.white,),
-          ),
+        child: Scaffold(
+      appBar: AppBar(
+        backgroundColor: design.onSurface,
+        title: Text(
+          "Account",
+          style: TextStyle(color: Colors.white),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildAccountHeader(design),
-              const SizedBox(height: 20),
-              // Language selection
-              _buildLanguageSelector(design),
-              const Divider(),
-              // Theme toggle
-              _buildThemeToggle(design),
-              const Divider(),
-              // Rate use slider
-              _buildRateUseSlider(design),
-              // Add more settings here...
-              SizedBox(height: 200,),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                
-                child: 
-                    Center(
-                      child: SizedBox(
-                        width: 350,
-                        child: MyButton(
-                            onPressed: () => {context.goNamed(Routes.routeLogin)},
-                            text: "Logout",
-                            color: design.error),
-                      ),
-                    ),
-                
-                
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
           ),
-            ]
         ),
       ),
-    )
-    );
+      body: SingleChildScrollView(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          _buildAccountHeader(design),
+          const SizedBox(height: 20),
+          // Language selection
+          _buildLanguageSelector(design),
+          const Divider(),
+          // Theme toggle
+          _buildThemeToggle(design),
+          const Divider(),
+          // Rate use slider
+          _buildRateUseSlider(design),
+          // Add more settings here...
+          SizedBox(
+            height: 200,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(
+              child: SizedBox(
+                width: 350,
+                child: MyButton(
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                      context.goNamed(Routes.routeLogin);
+                           ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('logged out successfully!')),
+                                );
+
+                    },
+                    text: "Logout",
+                    color: design.error),
+              ),
+            ),
+          ),
+        ]),
+      ),
+    ));
   }
 
   Widget _buildAccountHeader(Design design) {
@@ -132,8 +139,8 @@ class _MySettingsPageState extends State<MySettingsPage> {
             value: _selectedLanguage,
             items: const [
               DropdownMenuItem(value: 'English', child: Text('English')),
-              DropdownMenuItem(value: 'French', child: Text('French')),
-              DropdownMenuItem(value: 'Spanish', child: Text('Spanish')),
+              //DropdownMenuItem(value: 'French', child: Text('French')),
+              //DropdownMenuItem(value: 'Spanish', child: Text('Spanish')),
             ],
             onChanged: (value) {
               setState(() {
