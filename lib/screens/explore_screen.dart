@@ -28,7 +28,7 @@ class _MyExplorePageState extends State<MyExplorePage> {
   @override
   Widget build(BuildContext context) {
     final coinBloC = context.read<CoinBlockProvider>();
-    // ignore: unused_local_variable
+ 
     Design design = Design(context);
     final List<CoinModel> coins = [];
 

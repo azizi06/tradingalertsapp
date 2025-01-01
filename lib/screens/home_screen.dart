@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:stocksalertapp/components/item.dart';
 import 'package:stocksalertapp/components/item2.dart';
+import 'package:stocksalertapp/components/my_bottomAppBar.dart';
 import 'package:stocksalertapp/models/coinModal.dart';
 
 class Home extends StatefulWidget {
@@ -19,13 +20,15 @@ class _HomeState extends State<Home> {
     getCoinMarket(); // Récupère les informations du marché des cryptos
   }
 
-  bool isRefreshing = true; // Indicateur pour savoir si les données sont en train de se rafraîchir
+  bool isRefreshing =
+      true; // Indicateur pour savoir si les données sont en train de se rafraîchir
   List? coinMarket = []; // Liste des monnaies (crypto)
   var coinMarketList; // Variable temporaire pour stocker les données récupérées
 
   // Méthode pour récupérer les données du marché des cryptos
   Future<List<CoinModel>?> getCoinMarket() async {
-    const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&sparkline=true';
+    const url =
+        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&sparkline=true';
 
     setState(() {
       isRefreshing = true; // Début du rafraîchissement
@@ -47,7 +50,8 @@ class _HomeState extends State<Home> {
         coinMarket = coinMarketList; // Mise à jour des données du marché
       });
     } else {
-      print("Erreur: ${response.statusCode}"); // Affichage d'une erreur si la requête échoue
+      print(
+          "Erreur: ${response.statusCode}"); // Affichage d'une erreur si la requête échoue
     }
   }
 
@@ -57,6 +61,7 @@ class _HomeState extends State<Home> {
     double myWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      bottomNavigationBar:  MyBottomAppBar(),
       // Début du corps de la page
       body: SingleChildScrollView(
         child: Container(
@@ -74,9 +79,11 @@ class _HomeState extends State<Home> {
                   children: [
                     Container(
                       padding: EdgeInsets.symmetric(
-                          horizontal: myWidth * 0.02, vertical: myHeight * 0.005),
+                          horizontal: myWidth * 0.02,
+                          vertical: myHeight * 0.005),
                       decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 60, 60, 60).withOpacity(0.5),
+                          color:
+                              Color.fromARGB(255, 60, 60, 60).withOpacity(0.5),
                           borderRadius: BorderRadius.circular(5)),
                       child: Text(
                         'Portefeuille principal',
@@ -94,8 +101,7 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
-              
-              
+
               // Affichage du solde du portefeuille
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: myWidth * 0.07),
@@ -117,7 +123,7 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
-              
+
               // Affichage de l'augmentation en pourcentage
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: myWidth * 0.07),
@@ -154,7 +160,8 @@ class _HomeState extends State<Home> {
                     children: [
                       SizedBox(height: myHeight * 0.03),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: myWidth * 0.08),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: myWidth * 0.08),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -177,7 +184,8 @@ class _HomeState extends State<Home> {
                               physics: NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
                                 return Item(
-                                  item: coinMarket![index], // Affichage des items
+                                  item:
+                                      coinMarket![index], // Affichage des items
                                 );
                               },
                             ),
@@ -185,18 +193,20 @@ class _HomeState extends State<Home> {
 
                       // Recommandation pour acheter des coins
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: myWidth * 0.05),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: myWidth * 0.05),
                         child: Row(
                           children: [
                             Text(
                               'Recommandé à acheter',
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 22, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
                       ),
                       SizedBox(height: myHeight * 0.02),
-                      
+
                       // Affichage horizontal des coins recommandés
                       Container(
                         height: myHeight * 0.3,
@@ -205,7 +215,8 @@ class _HomeState extends State<Home> {
                           itemCount: coinMarket!.length,
                           itemBuilder: (context, index) {
                             return Item2(
-                              item: coinMarket![index], // Affichage des items recommandés
+                              item: coinMarket![
+                                  index], // Affichage des items recommandés
                             );
                           },
                         ),

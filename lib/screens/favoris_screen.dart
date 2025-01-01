@@ -3,6 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stocksalertapp/models/coin_model.dart';
+
+import 'package:stocksalertapp/screens/market_screen.dart';
+
+import 'package:stocksalertapp/state_management/coin_block/coin_block_provider.dart';
+import 'package:stocksalertapp/state_management/coin_block/coin_event.dart';
+import 'package:stocksalertapp/state_management/coin_block/coin_state.dart';
 
 class FavouritePage extends StatefulWidget {
   @override
@@ -23,8 +31,8 @@ class _FavouritePageState extends State<FavouritePage> {
     "pepecoin" // Ajout de PepeCoin
   ];
 
-  List<Map<String, dynamic>> _coinData = [];
-  List<Map<String, dynamic>> _filteredCoins = [];
+  List<CoinModel> _coinData = [];
+  List<CoinModel> _filteredCoins = [];
   final TextEditingController _searchController = TextEditingController();
   bool _isLoading = false;
   String _selectedSortOption = 'price_asc'; // Critère de tri par défaut
@@ -38,40 +46,28 @@ class _FavouritePageState extends State<FavouritePage> {
     }
   }
 
-  Future<void> _fetchCoinPrices() async {
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      final response = await http.get(Uri.parse(
-          "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${_coins.join(',')}&order=market_cap_desc&per_page=100&page=1&sparkline=false"));
+  void _fetchCoinPrices2() {
+    _isLoading = true;
+    final coinBloC = context.read<CoinBlockProvider>();
+    coinBloC.add(CoinListInitEvent());
 
-      if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
-        setState(() {
-          _coinData = data.map((coin) {
-            return {
-              "name": coin['id'],
-              "price": coin['current_price'] ?? 0.0,
-              "market_cap": coin['market_cap'] ?? 0.0,
-              "change_24h": coin['price_change_percentage_24h'] ?? 0.0,
-              "image": coin['image'] ?? '', // URL du logo
-            };
-          }).toList();
-          _filteredCoins = List.from(_coinData);
-        });
-        _sortCoins(_selectedSortOption); // Trier après le chargement
-      } else {
-        throw Exception("Failed to load prices");
-      }
-    } catch (error) {
+    _isLoading = false;
+  }
+
+  void _fetchCoinPrices() {
+    _isLoading = true;
+    try {
+      final coinBloC = context.read<CoinBlockProvider>();
+      coinBloC.add(CoinListInitEvent());
+    } catch (e) {
+      // Handle error
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erreur lors du chargement des prix.")),
+        SnackBar(
+            content: Text("Erreur lors du chargement des prix des pièces.")),
       );
-    }
-    setState(() {
+    } finally {
       _isLoading = false;
-    });
+    }
   }
 
   Future<void> _loadFavorites() async {
@@ -82,7 +78,6 @@ class _FavouritePageState extends State<FavouritePage> {
         _coins = savedFavorites;
       });
     }
-    await _fetchCoinPrices();
   }
 
   Future<void> _saveFavorites() async {
@@ -90,34 +85,28 @@ class _FavouritePageState extends State<FavouritePage> {
     prefs.setStringList('favorites', _coins);
   }
 
-  void _filterCoins(String query) {
+  void _sortCoins(String criterion, CoinBlockProvider coinBloc) {
     setState(() {
-      if (query.isEmpty) {
-        _filteredCoins = List.from(_coinData);
-      } else {
-        _filteredCoins = _coinData
-            .where((coin) =>
-                coin['name'].toLowerCase().contains(query.toLowerCase()))
-            .toList();
-      }
-    });
-  }
-
-  void _sortCoins(String criterion) {
-    setState(() {
-      _selectedSortOption = criterion; // Mettre à jour l'option de tri sélectionnée
+      _selectedSortOption =
+          criterion; // Mettre à jour l'option de tri sélectionnée
       if (criterion == 'price_asc') {
-        _filteredCoins.sort((a, b) => a['price'].compareTo(b['price']));
+        //_filteredCoins.sort((a, b) => a['price'].compareTo(b['price']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.priceAsc));
       } else if (criterion == 'price_desc') {
-        _filteredCoins.sort((a, b) => b['price'].compareTo(a['price']));
+        // _filteredCoins.sort((a, b) => b['price'].compareTo(a['price']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.priceDesc));
       } else if (criterion == 'change_24h_asc') {
-        _filteredCoins.sort((a, b) => a['change_24h'].compareTo(b['change_24h']));
+        // _filteredCoins.sort((a, b) => a.priceChangePercentage24h.compareTo(b.priceChangePercentage24h));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.change24hAsc));
       } else if (criterion == 'change_24h_desc') {
-        _filteredCoins.sort((a, b) => b['change_24h'].compareTo(a['change_24h']));
+        //_filteredCoins.sort((a, b) => b.priceChangePercentage24h.compareTo(a.priceChangePercentage24h));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.change24hDesc));
       } else if (criterion == 'name_asc') {
-        _filteredCoins.sort((a, b) => a['name'].compareTo(b['name']));
+        //_filteredCoins.sort((a, b) => a['name'].compareTo(b['name']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.nameAsc));
       } else if (criterion == 'name_desc') {
-        _filteredCoins.sort((a, b) => b['name'].compareTo(a['name']));
+        //_filteredCoins.sort((a, b) => b['name'].compareTo(a['name']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.nameDesc));
       }
     });
   }
@@ -132,10 +121,10 @@ class _FavouritePageState extends State<FavouritePage> {
           _coins.add(coin);
         });
         await _saveFavorites();
-        await _fetchCoinPrices();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Le coin $coin n'existe pas ou est invalide.")),
+          SnackBar(
+              content: Text("Le coin $coin n'existe pas ou est invalide.")),
         );
       }
     } else {
@@ -151,7 +140,8 @@ class _FavouritePageState extends State<FavouritePage> {
       builder: (context) {
         return AlertDialog(
           title: Text("Confirmer la suppression"),
-          content: Text("Êtes-vous sûr de vouloir supprimer $coin de vos favoris ?"),
+          content:
+              Text("Êtes-vous sûr de vouloir supprimer $coin de vos favoris ?"),
           actions: [
             TextButton(
               onPressed: () {
@@ -174,11 +164,12 @@ class _FavouritePageState extends State<FavouritePage> {
 
   void _removeCoin(String coin) async {
     if (_coins.contains(coin)) {
-      setState(() {
-        _coins.remove(coin);
-      });
+      _coins.remove(coin);
+
       await _saveFavorites();
-      await _fetchCoinPrices();
+      setState(() {});
+    } else {
+      print("\033[65m confirmRemoveCoin : $coin Not Found");
     }
   }
 
@@ -193,12 +184,27 @@ class _FavouritePageState extends State<FavouritePage> {
     await _saveFavorites();
   }
 
+  void _filterCoins(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredCoins = List.from(_coinData);
+      } else {
+        _filteredCoins = _coinData
+            .where(
+                (coin) => coin.id.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _loadFavorites();
+    final coinBloC = context.read<CoinBlockProvider>();
+    coinBloC.add(CoinListInitEvent());
     _searchController.addListener(() {
-      _filterCoins(_searchController.text);
+      setState(() {});
     });
   }
 
@@ -210,146 +216,206 @@ class _FavouritePageState extends State<FavouritePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () => context.pop(),
-            icon: Icon(Icons.arrow_back_ios),
-          ),
-        title: const Text("Mes Coins Favoris"),
-        //backgroundColor: Colors.blue[600],
-        actions: [
-          // Dropdown de tri
-          DropdownButton<String>(
-            value: _selectedSortOption,
-          //  dropdownColor: Colors.blue[600],
-          //  style: TextStyle(color: Colors.white),
-            underline: Container(),
-            icon: Icon(Icons.sort),
-            onChanged: (String? newValue) {
-              if (newValue != null) {
-                _sortCoins(newValue);
-              }
-            },
-            items: [
-              // Option de tri par prix croissant
-              DropdownMenuItem(
-                value: 'price_asc',
-                child: Text("Trier par Prix (Croissant)"),
+    final coinBloc = context.read<CoinBlockProvider>();
+
+    return DefaultTabController(
+      length: 2,
+      initialIndex: 0,
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(150),
+          child: AppBar(
+            leading: IconButton(
+              onPressed: () => context.pop(),
+              icon: Icon(Icons.arrow_back_ios),
+            ),
+            title: const Text("Mes Coins Favoris"),
+            //backgroundColor: Colors.blue[600],
+            actions: [
+              // Dropdown de tri
+              DropdownButton<String>(
+                value: _selectedSortOption,
+                //  dropdownColor: Colors.blue[600],
+                //  style: TextStyle(color: Colors.white),
+                underline: Container(),
+                icon: Icon(Icons.sort),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    _sortCoins(newValue, coinBloc);
+                  }
+                },
+
+                items: [
+                  // Option de tri par prix croissant
+                  DropdownMenuItem(
+                    value: 'price_asc',
+                    child: Text("Trier par Prix (Croissant)"),
+                  ),
+                  // Option de tri par prix décroissant
+                  DropdownMenuItem(
+                    value: 'price_desc',
+                    child: Text("Trier par Prix (Décroissant)"),
+                  ),
+                  // Option de tri par variation 24h croissante
+                  DropdownMenuItem(
+                    value: 'change_24h_asc',
+                    child: Text("Trier par Variation 24h (Croissant)"),
+                  ),
+                  // Option de tri par variation 24h décroissante
+                  DropdownMenuItem(
+                    value: 'change_24h_desc',
+                    child: Text("Trier par Variation 24h (Décroissant)"),
+                  ),
+                  // Option de tri par nom croissant (A-Z)
+                  DropdownMenuItem(
+                    value: 'name_asc',
+                    child: Text("Trier par Nom (A-Z)"),
+                  ),
+                  // Option de tri par nom décroissant (Z-A)
+                  DropdownMenuItem(
+                    value: 'name_desc',
+                    child: Text("Trier par Nom (Z-A)"),
+                  ),
+                ],
               ),
-              // Option de tri par prix décroissant
-              DropdownMenuItem(
-                value: 'price_desc',
-                child: Text("Trier par Prix (Décroissant)"),
-              ),
-              // Option de tri par variation 24h croissante
-              DropdownMenuItem(
-                value: 'change_24h_asc',
-                child: Text("Trier par Variation 24h (Croissant)"),
-              ),
-              // Option de tri par variation 24h décroissante
-              DropdownMenuItem(
-                value: 'change_24h_desc',
-                child: Text("Trier par Variation 24h (Décroissant)"),
-              ),
-              // Option de tri par nom croissant (A-Z)
-              DropdownMenuItem(
-                value: 'name_asc',
-                child: Text("Trier par Nom (A-Z)"),
-              ),
-              // Option de tri par nom décroissant (Z-A)
-              DropdownMenuItem(
-                value: 'name_desc',
-                child: Text("Trier par Nom (Z-A)"),
+              // Bouton de rafraîchissement pour actualiser les prix
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: _fetchCoinPrices,
               ),
             ],
-          ),
-          // Bouton de rafraîchissement pour actualiser les prix
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _fetchCoinPrices,
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48.0),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: "Rechercher un coin...",
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(48.0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
+                        hintText: "Rechercher un coin...",
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                    ),
+                    TabBar(tabs: [
+                      Tab(
+                        text: "All Coins",
+                      ),
+                      Tab(
+                        text: "Favoris",
+                      ),
+                    ]),
+                  ],
                 ),
-                filled: true,
-                fillColor: Colors.white,
               ),
             ),
           ),
         ),
-      ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : ReorderableListView(
-              onReorder: _onReorder,
-              children: _filteredCoins.map((coin) {
-                return ListTile(
-                  key: Key(coin['name']),
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(coin['image']),
-                    backgroundColor: Colors.transparent,
-                  ),
-                  title: Text(coin['name']),
-                  subtitle: Text(
-                     "Prix"// "Prix: ${_formatPrice(coin['price'])}\nVariation 24h: ${coin['change_24h'].toStringAsFixed(2)}%"
+        body: Container(
+          child: _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : BlocConsumer<CoinBlockProvider, CoinState>(
+                  listener: (context, state) {
+                  if (state.coins.isNotEmpty) {
+                    setState(() {
+                      _filteredCoins = state.coins;
+                      _coinData = state.coins;
+                      print("filtered coins : $_filteredCoins");
+                    });
+                  }
+                }, builder: (context, state) {
+                  List<CoinModel> _filteredCoins2 = [];
+                  if (_searchController.text.isEmpty) {
+                    _filteredCoins2 = state.coins;
+                  } else {
+                    _filteredCoins2 = state.coins
+                        .where((coin) => coin.id
+                            .toLowerCase()
+                            .contains(_searchController.text.toLowerCase()))
+                        .toList();
+                  }
+                  return TabBarView(
+                    children: [
+                      MarketScreen(
+                        coins: _filteredCoins2,
                       ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      _confirmRemoveCoin(coin['name']);
-                    },
+                      Expanded(
+                        child: BlocBuilder<CoinBlockProvider, CoinState>(
+                            builder: (context, state) {
+                          final _favFilteredCoins =
+                              _filteredCoins2.where((coin) {
+                            return _coins.contains(coin.id.toLowerCase());
+                          }).toList();
+                          return ReorderableListView(
+                            onReorder: _onReorder,
+                            children: _favFilteredCoins.map((coin) {
+                              return ListTile(
+                                key: Key(coin.id),
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(coin.image),
+                                  backgroundColor: Colors.transparent,
+                                ),
+                                title: Text(coin.id),
+                                subtitle: Text(
+                                    "Prix: ${_formatPrice(coin.currentPrice)}\nVariation 24h: ${coin.priceChange24h.toStringAsFixed(2)}%"),
+                                trailing: IconButton(
+                                  icon: Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () {
+                                    _confirmRemoveCoin(coin.id);
+                                  },
+                                ),
+                              );
+                            }).toList(),
+                          );
+                        }),
+                      )
+                    ],
+                  );
+                }),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            final newCoin = await showDialog<String>(
+              context: context,
+              builder: (context) {
+                final TextEditingController _newCoinController =
+                    TextEditingController();
+                return AlertDialog(
+                  title: Text("Ajouter un nouveau coin"),
+                  content: TextField(
+                    controller: _newCoinController,
+                    decoration:
+                        InputDecoration(hintText: "Entrez le nom du coin"),
                   ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(null);
+                      },
+                      child: Text("Annuler"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pop(_newCoinController.text.toLowerCase());
+                      },
+                      child: Text("Ajouter"),
+                    ),
+                  ],
                 );
-              }).toList(),
-            ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final newCoin = await showDialog<String>(
-            context: context,
-            builder: (context) {
-              final TextEditingController _newCoinController =
-                  TextEditingController();
-              return AlertDialog(
-                title: Text("Ajouter un nouveau coin"),
-                content: TextField(
-                  controller: _newCoinController,
-                  decoration: InputDecoration(hintText: "Entrez le nom du coin"),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(null);
-                    },
-                    child: Text("Annuler"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context)
-                          .pop(_newCoinController.text.toLowerCase());
-                    },
-                    child: Text("Ajouter"),
-                  ),
-                ],
-              );
-            },
-          );
-          if (newCoin != null) {
-            await _addCoin(newCoin);
-          }
-        },
-        child: Icon(Icons.add),
+              },
+            );
+            if (newCoin != null) {
+              await _addCoin(newCoin);
+            }
+          },
+          child: Icon(Icons.add),
+        ),
       ),
     );
   }

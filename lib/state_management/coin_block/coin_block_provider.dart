@@ -16,17 +16,8 @@ class CoinBlockProvider extends Bloc<CoinEvent, CoinState> {
         final fetchedData = await fetchCoins();
 
         if (fetchedData.isNotEmpty && fetchedData is List) {
-          print(
-              "------------------------------------------------------------------- DATA START ---------------------------------------------------");
-          print(fetchedData);
-          print("\nHooooHaaa");
-          print(
-              "------------------------------------------------------------------- DATA  END ---------------------------------------------------");
-     
           for (var item in fetchedData) {
             coins.add(CoinModel.fromJson(item));
-           
-           
           }
           print("emiting... ");
           emit(CoinState(coins: coins));
@@ -37,10 +28,19 @@ class CoinBlockProvider extends Bloc<CoinEvent, CoinState> {
         print('Error loading data: $e');
         emit(CoinState(coins: []));
       }
-
-      
     });
-    
+
+    on<CoinSortEvent>((event, emit) async {
+      CoinSortingMethod method = event.method;
+      List<CoinModel> coins = state.coins;
+      try {
+        List<CoinModel> sortedCoins = _onSortCoins(method, coins);
+        emit(CoinState(coins: sortedCoins));
+      } catch (e) {
+        print('Error loading data: $e');
+        emit(CoinState(coins: coins));
+      }
+    });
   }
 
   Future<List<dynamic>> fetchCoins() async {
@@ -56,12 +56,14 @@ class CoinBlockProvider extends Bloc<CoinEvent, CoinState> {
         // Decode response data (Dio already decodes JSON for you)
         return response.data; // This will be a List<dynamic>
       } else {
-        throw Exception(
-            'Failed to load coins. Status code: ${response.statusCode}');
+        print('Failed to load coins. Status code: ${response.statusCode}');
+        return loadJsonData();
       }
     } catch (e) {
-      print('Failed to load coins: $e');
-      throw Exception('Failed to load coins: $e');
+        print('Failed to load coins. Status code: $e');
+        return loadJsonData();
+      /* print('Failed to load coins: $e');
+      throw Exception('Failed to load coins: $e'); */
     }
   }
 
@@ -79,5 +81,31 @@ class CoinBlockProvider extends Bloc<CoinEvent, CoinState> {
       print('Error reading local JSON file: $e');
       throw Exception('Error reading local JSON file: $e');
     }
+  }
+
+  List<CoinModel> _onSortCoins(
+      CoinSortingMethod method, List<CoinModel> coins) {
+    // Create a copy of the list to avoid modifying the original
+    final sortedCoins = List<CoinModel>.from(coins);
+
+    // Apply the sorting logic
+    if (method == CoinSortingMethod.priceAsc) {
+      sortedCoins.sort((a, b) => a.currentPrice.compareTo(b.currentPrice));
+    } else if (method == CoinSortingMethod.priceDesc) {
+      sortedCoins.sort((a, b) => b.currentPrice.compareTo(a.currentPrice));
+    } else if (method == CoinSortingMethod.change24hAsc) {
+      sortedCoins.sort((a, b) =>
+          a.priceChangePercentage24h.compareTo(b.priceChangePercentage24h));
+    } else if (method == CoinSortingMethod.change24hDesc) {
+      sortedCoins.sort((a, b) =>
+          b.priceChangePercentage24h.compareTo(a.priceChangePercentage24h));
+    } else if (method == CoinSortingMethod.nameAsc) {
+      sortedCoins.sort((a, b) => a.name.compareTo(b.name));
+    } else if (method == CoinSortingMethod.nameDesc) {
+      sortedCoins.sort((a, b) => b.name.compareTo(a.name));
+    }
+
+    // Return the sorted list
+    return sortedCoins;
   }
 }

@@ -51,6 +51,8 @@ class _MyTestPageState extends State<MyTestPage> {
           MyButton(onPressed: () => {themeBloc.add(ThemeChangeEvent(ThemeType.lightMediumContrast))}, text: "light2", color: design.error),
           MyButton(onPressed: () => {context.pushNamed(Routes.routeLogin)}, text: "Login", color: design.error),
           MyButton(onPressed: () => {context.pushNamed(Routes.routeSignUp)}, text: "SignUp", color: design.primary),
+          MyButton(onPressed: () => {context.pushNamed(Routes.routeSettings)}, text: "Settings", color: design.primary),
+
 
           
         

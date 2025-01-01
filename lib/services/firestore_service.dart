@@ -1,30 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:stocksalertapp/models/alert_model.dart';
 
-class FirestoreService{
+class AlertService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final String collectionName = 'alerts';
 
+  /// Adds a new alert to Firestore.
   Future<void> addAlert(AlertModel alert) async {
-    try {
-      await _firestore.collection('alerts').add(alert.toJson());
-      print('Alert added successfully!');
-    } catch (e) {
-      print('Error adding alert: $e');
-    }
+    await _firestore.collection(collectionName).add(alert.toJson());
   }
 
-  Future<List<AlertModel>> getAlerts() async {
-  try {
-    QuerySnapshot snapshot = await _firestore.collection('alerts').get();
-    return snapshot.docs.map((doc) {
-      return AlertModel.fromJson(doc.data() as Map<String, dynamic>);
-    }).toList();
-  } catch (e) {
-    print('Error fetching alerts: $e');
-    return [];
+  /// Fetches all alerts for a given FCM token.
+  Future<List<AlertModel>> fetchAlertsByToken(String fcmToken) async {
+    final querySnapshot = await _firestore
+        .collection(collectionName)
+        .where('fcmToken', isEqualTo: fcmToken)
+        .get();
+
+    return querySnapshot.docs
+        .map((doc) => AlertModel.fromJson(doc.data()))
+        .toList();
+  }
+
+  /// Updates the `isNotified` status of an alert by its document ID.
+  Future<void> updateNotificationStatus(String documentId, bool status) async {
+    await _firestore
+        .collection(collectionName)
+        .doc(documentId)
+        .update({'isNotified': status});
+  }
+
+  /// Deletes an alert from Firestore by its document ID.
+  Future<void> deleteAlert(String documentId) async {
+    await _firestore.collection(collectionName).doc(documentId).delete();
   }
 }
-
-}
-
-
