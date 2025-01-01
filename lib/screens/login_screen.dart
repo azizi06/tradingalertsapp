@@ -26,12 +26,12 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     Design design = Design(context);
     return Scaffold(
-      backgroundColor: design.background, //Colors.grey[900],
+      backgroundColor: Colors.grey[900],
       body: Stack(
         children: [
            Positioned.fill(
                 child: Opacity(
-                  opacity: 0.2,
+                  opacity: 0.3,
                   child: Image.asset(
                     'assets/crypto_background.jpg', // Assurez-vous que l'image existe dans le dossier assets
                     fit: BoxFit.cover,
@@ -42,21 +42,22 @@ class _LoginPageState extends State<LoginPage> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
+                SizedBox(height: 60,),
                 SizedBox(
-                  height: 260,
-                  child: Center(
-                    widthFactor: 0,
+                  height: 210,
+                  width: double.infinity,
+                  
                    child:  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                      children: [
-                       Text("Trading Alerts",style: TextStyle(fontSize: 40,fontWeight: FontWeight.bold),),
-                       Text("Stay Up-to-Date",style: TextStyle(fontSize: 10,fontWeight: FontWeight.w300),),
+                       Text("Trading Alerts",style: TextStyle(fontSize: 40,fontWeight: FontWeight.bold , color: Colors.white),),
+                       Text("Stay Up-to-Date",style: TextStyle(fontSize: 10,fontWeight: FontWeight.w300, color: Colors.white),),
 
 
                      ],
                    )
-                  ),
+                
                 ),
                
                 Form(
@@ -74,10 +75,10 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        "Login to start making alarm to trading crypto.",
+                        "Login,and start setting alerts for trading crypto",
                         style: GoogleFonts.roboto(
                           color: Colors.white.withOpacity(0.8),
-                          fontSize: 16,
+                          fontSize: 12,
                         ),
                       ),
                       const SizedBox(height: 30),
@@ -173,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Login successful!')),
                               );
-                              context.goNamed(Routes.routeExplore);
+                              context.goNamed(Routes.routeMyHomePage);
                             }
                           },
                           child: Text(
