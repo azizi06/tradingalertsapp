@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stocksalertapp/helpers/design.dart';
 import 'package:stocksalertapp/helpers/routes.dart';
-
+// password : Tlemcen@1234
+// email : tlemcen@algeria.com
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -12,9 +14,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController =
-      TextEditingController(text: "email@email.com");
+      TextEditingController(text: "tlemcen@algeria.com");
   final TextEditingController passwordController =
-      TextEditingController(text: "Pass@word1");
+      TextEditingController(text: "Tlemcen@1234");
 
   bool _passwordVisible = false;
 
@@ -29,37 +31,45 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.grey[900],
       body: Stack(
         children: [
-           Positioned.fill(
-                child: Opacity(
-                  opacity: 0.3,
-                  child: Image.asset(
-                    'assets/crypto_background.jpg', // Assurez-vous que l'image existe dans le dossier assets
-                    fit: BoxFit.cover,
-                  ),
-                ),
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.3,
+              child: Image.asset(
+                'assets/crypto_background.jpg', // Assurez-vous que l'image existe dans le dossier assets
+                fit: BoxFit.cover,
               ),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                SizedBox(height: 60,),
                 SizedBox(
-                  height: 210,
-                  width: double.infinity,
-                  
-                   child:  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [
-                       Text("Trading Alerts",style: TextStyle(fontSize: 40,fontWeight: FontWeight.bold , color: Colors.white),),
-                       Text("Stay Up-to-Date",style: TextStyle(fontSize: 10,fontWeight: FontWeight.w300, color: Colors.white),),
-
-
-                     ],
-                   )
-                
+                  height: 60,
                 ),
-               
+                SizedBox(
+                    height: 210,
+                    width: double.infinity,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Trading Alerts",
+                          style: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                        Text(
+                          "Stay Up-to-Date",
+                          style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white),
+                        ),
+                      ],
+                    )),
                 Form(
                   key: _formKey,
                   child: Column(
@@ -149,7 +159,8 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         validator: (value) {
                           final passwordRegExp = RegExp(passwordPatternRules);
-                          if (value == null || !passwordRegExp.hasMatch(value)) {
+                          if (value == null ||
+                              !passwordRegExp.hasMatch(value)) {
                             return 'Password must have at least 8 characters,\n 1 uppercase letter, 1 number, and 1 special character';
                           }
                           return null;
@@ -167,20 +178,48 @@ class _LoginPageState extends State<LoginPage> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          onPressed: () {
+                          onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               print("Email: ${emailController.text}");
                               print("Password: ${passwordController.text}");
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Login successful!')),
-                              );
-                              context.goNamed(Routes.routeMyHomePage);
+
+                              try {
+                                UserCredential userCredential =
+                                    await FirebaseAuth.instance
+                                        .signInWithEmailAndPassword(
+                                            email: emailController.text,
+                                            password: passwordController.text);
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Login successful!')),
+                                );
+                                context.goNamed(Routes.routeMyHomePage);
+                              } on FirebaseAuthException catch (e) {
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                            Text('invalid-email or password')),
+                                  );
+
+
+                                if (e.code == 'invalid-email') {
+                                  
+                                  print('Invalid Email');
+                                } else if (e.code == 'invalid-credential') {
+                                  print('user-not-found OR Wrong Password');
+                                } else {
+                                  print(
+                                      'Failed to login with error code: ${e.code}, ${e.message}');
+                                }
+                              }
                             }
                           },
                           child: Text(
                             "Login",
                             style: GoogleFonts.poppins(
-                              fontSize: 16, // Reduced size
+                              fontSize: 16, 
                               fontWeight: FontWeight.bold,
                               color: design.onPrimary,
                             ),
