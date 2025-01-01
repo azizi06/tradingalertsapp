@@ -13,9 +13,10 @@ class MyBottomAppBar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(onPressed: () => context.pushNamed(Routes.routeMyHomePage), icon: Icon(Icons.home,)),
-              IconButton(onPressed: () => context.goNamed(Routes.routeExplore), icon: Icon(Icons.search_rounded)),
-              IconButton(onPressed: () => context.pushNamed(Routes.routeFavourite), icon: Icon(Icons.heart_broken_outlined)),
+              IconButton(onPressed: () => context.goNamed(Routes.routeMyHomePage), icon: Icon(Icons.home,)),
+             // IconButton(onPressed: () => context.goNamed(Routes.routeExplore), icon: Icon(Icons.search_rounded)),
+              IconButton(onPressed: () => context.pushNamed(Routes.routeFavourite), icon: Icon(Icons.search_rounded)),
+              SizedBox(height: 10,width: 30,),
               IconButton(onPressed: () => context.pushNamed(Routes.routeAlarm), icon: Icon(Icons.alarm)),
               IconButton(onPressed: () => context.pushNamed(Routes.routeSettings), icon: Icon(Icons.heart_broken,)),
             ],

@@ -164,10 +164,12 @@ class _FavouritePageState extends State<FavouritePage> {
 
   void _removeCoin(String coin) async {
     if (_coins.contains(coin)) {
-      setState(() {
-        _coins.remove(coin);
-      });
+      _coins.remove(coin);
+
       await _saveFavorites();
+      setState(() {});
+    } else {
+      print("\033[65m confirmRemoveCoin : $coin Not Found");
     }
   }
 
@@ -358,13 +360,13 @@ class _FavouritePageState extends State<FavouritePage> {
                                   backgroundImage: NetworkImage(coin.image),
                                   backgroundColor: Colors.transparent,
                                 ),
-                                title: Text(coin.name),
+                                title: Text(coin.id),
                                 subtitle: Text(
                                     "Prix: ${_formatPrice(coin.currentPrice)}\nVariation 24h: ${coin.priceChange24h.toStringAsFixed(2)}%"),
                                 trailing: IconButton(
                                   icon: Icon(Icons.delete, color: Colors.red),
                                   onPressed: () {
-                                    _confirmRemoveCoin(coin.name);
+                                    _confirmRemoveCoin(coin.id);
                                   },
                                 ),
                               );

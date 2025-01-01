@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:stocksalertapp/components/item.dart';
 import 'package:stocksalertapp/components/item2.dart';
+import 'package:stocksalertapp/components/my_bottomAppBar.dart';
 import 'package:stocksalertapp/models/coinModal.dart';
 
 class Home extends StatefulWidget {
@@ -60,6 +61,7 @@ class _HomeState extends State<Home> {
     double myWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      bottomNavigationBar:  MyBottomAppBar(),
       // Début du corps de la page
       body: SingleChildScrollView(
         child: Container(
