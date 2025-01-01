@@ -1,61 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// ignore: unused_import
-import 'package:stocksalertapp/components/my_IconButton.dart';
-import 'package:stocksalertapp/components/my_bottomAppBar.dart';
 import 'package:stocksalertapp/components/my_stockSquareCard.dart';
 import 'package:stocksalertapp/helpers/design.dart';
-import 'package:stocksalertapp/models/coin_model.dart';
+import 'package:stocksalertapp/models/coinModal.dart';
 import 'package:stocksalertapp/state_management/coin_block/coin_block_provider.dart';
-import 'package:stocksalertapp/state_management/coin_block/coin_event.dart';
 import 'package:stocksalertapp/state_management/coin_block/coin_state.dart';
 
-class MyExplorePage extends StatefulWidget {
-  const MyExplorePage({super.key});
+class MarketScreen extends StatefulWidget {
+  const MarketScreen({super.key});
 
   @override
-  State<MyExplorePage> createState() => _MyExplorePageState();
+  State<MarketScreen> createState() => _MarketScreenState();
 }
 
-class _MyExplorePageState extends State<MyExplorePage> {
-  @override
-/*   void initState() {
-    final coinBloC = context.read<CoinBlockProvider>();
-    coinBloC.add(CoinListInitEvent());
-    super.initState();
-  } */
-
+class _MarketScreenState extends State<MarketScreen> {
   @override
   Widget build(BuildContext context) {
-    final coinBloC = context.read<CoinBlockProvider>();
+     final coinBloC = context.read<CoinBlockProvider>();
  
     Design design = Design(context);
     final List<CoinModel> coins = [];
 
-    return SafeArea(
-          
-      child: DefaultTabController(
-            length: 1,
-            initialIndex: 0,
-        child: Scaffold(
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(100),
-            child: AppBar(
-              actions: [IconButton(
-                  onPressed: () => {coinBloC.add(CoinListInitEvent())},
-                  icon: Icon(Icons.refresh)),],
-                 bottom: TabBar(tabs: [
-                    Tab(
-                      text: "Coins",
-                    ),
-                    
-                  ]),
-            ),
-          ),
-          bottomNavigationBar: MyBottomAppBar(),
-          body: TabBarView(
-            children: [
-              Column(
+    return  Column(
                 children: [
                
                  Row(
@@ -72,7 +38,7 @@ class _MyExplorePageState extends State<MyExplorePage> {
                         setState(() {
                           // ignore: avoid_print
                           print("Length of coins: ${coins.length}");
-                          coins.addAll(state.coins);
+                          coins.addAll(state.coins as Iterable<CoinModel>);
                           // ignore: avoid_print
                           print("setState");
                           // ignore: avoid_print
@@ -110,12 +76,6 @@ class _MyExplorePageState extends State<MyExplorePage> {
                     },
                   ),
                 ],
-              ),
-              
-            ],
-          ),
-        ),
-      ),
-    );
+              );
   }
 }

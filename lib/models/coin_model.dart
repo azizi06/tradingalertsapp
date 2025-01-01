@@ -1,5 +1,22 @@
 import 'dart:convert';
 
+enum CoinSortingMethod {
+  priceAsc('price_asc'),
+  priceDesc('price_desc'),
+  change24hAsc('change_24h_asc'),
+  change24hDesc('change_24h_desc'),
+  nameAsc('name_asc'),
+  nameDesc('name_desc');
+
+  final String value;
+
+  const CoinSortingMethod(this.value);
+
+  @override
+  String toString() => value;
+}
+
+
 class CoinModel {
   final String id;
   final String symbol;
@@ -66,17 +83,24 @@ class CoinModel {
       currentPrice: (json['current_price'] as num?)?.toDouble() ?? 0.0,
       marketCap: (json['market_cap'] as num?)?.toDouble() ?? 0.0,
       marketCapRank: (json['market_cap_rank'] as num?)?.toDouble() ?? 0.0,
-      fullyDilutedValuation: (json['fully_diluted_valuation'] as num?)?.toDouble() ?? 0.0,
+      fullyDilutedValuation:
+          (json['fully_diluted_valuation'] as num?)?.toDouble() ?? 0.0,
       totalVolume: (json['total_volume'] as num?)?.toDouble() ?? 0.0,
       high24h: (json['high_24h'] as num?)?.toDouble() ?? 0.0,
       low24h: (json['low_24h'] as num?)?.toDouble() ?? 0.0,
       priceChange24h: (json['price_change_24h'] as num?)?.toDouble() ?? 0.0,
-      priceChangePercentage24h: (json['price_change_percentage_24h'] as num?)?.toDouble() ?? 0.0,
-      marketCapChange24h: (json['market_cap_change_24h'] as num?)?.toDouble() ?? 0.0,
-      marketCapChangePercentage24h: (json['market_cap_change_percentage_24h'] as num?)?.toDouble() ?? 0.0,
-      circulatingSupply: (json['circulating_supply'] as num?)?.toDouble() ?? 0.0,
+      priceChangePercentage24h:
+          (json['price_change_percentage_24h'] as num?)?.toDouble() ?? 0.0,
+      marketCapChange24h:
+          (json['market_cap_change_24h'] as num?)?.toDouble() ?? 0.0,
+      marketCapChangePercentage24h:
+          (json['market_cap_change_percentage_24h'] as num?)?.toDouble() ?? 0.0,
+      circulatingSupply:
+          (json['circulating_supply'] as num?)?.toDouble() ?? 0.0,
       totalSupply: (json['total_supply'] as num?)?.toDouble() ?? 0.0,
-      maxSupply: (json['max_supply'] != null && json['max_supply'] is num) ? (json['max_supply'] as num).toDouble() : 0.0,
+      maxSupply: (json['max_supply'] != null && json['max_supply'] is num)
+          ? (json['max_supply'] as num).toDouble()
+          : 0.0,
       //ath: (json['ath'] as num?)?.toDouble() ?? 0.0,
       //athChangePercentage: (json['ath_change_percentage'] as num?)?.toDouble() ?? 0.0,
       //athDate: DateTime.parse(json['ath_date']),
@@ -87,8 +111,8 @@ class CoinModel {
       //lastUpdated: DateTime.parse(json['last_updated']),
     );
   }
-  
-    Map<String, String> toMap() {
+
+  Map<String, String> toMap() {
     return {
       'id': id,
       'symbol': symbol,
@@ -110,7 +134,4 @@ class CoinModel {
       'maxSupply': maxSupply.toString(),
     };
   }
-
-
-
 }

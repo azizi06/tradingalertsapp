@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stocksalertapp/models/coin_model.dart';
+
+import 'package:stocksalertapp/screens/market_screen.dart';
+import 'package:stocksalertapp/state_management/coin_block/coin_block_provider.dart';
+import 'package:stocksalertapp/state_management/coin_block/coin_event.dart';
 
 class FavouritePage extends StatefulWidget {
   @override
@@ -60,7 +66,7 @@ class _FavouritePageState extends State<FavouritePage> {
           }).toList();
           _filteredCoins = List.from(_coinData);
         });
-        _sortCoins(_selectedSortOption); // Trier après le chargement
+        //_sortCoins(_selectedSortOption); // Trier après le chargement
       } else {
         throw Exception("Failed to load prices");
       }
@@ -103,21 +109,35 @@ class _FavouritePageState extends State<FavouritePage> {
     });
   }
 
-  void _sortCoins(String criterion) {
+  void _sortCoins(String criterion,CoinBlockProvider coinBloc) {
     setState(() {
-      _selectedSortOption = criterion; // Mettre à jour l'option de tri sélectionnée
-      if (criterion == 'price_asc') {
+      _selectedSortOption =
+          criterion; // Mettre à jour l'option de tri sélectionnée
+      if (criterion =='price_asc') {
         _filteredCoins.sort((a, b) => a['price'].compareTo(b['price']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.priceAsc));
+
       } else if (criterion == 'price_desc') {
         _filteredCoins.sort((a, b) => b['price'].compareTo(a['price']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.priceDesc));
+
       } else if (criterion == 'change_24h_asc') {
         _filteredCoins.sort((a, b) => a['change_24h'].compareTo(b['change_24h']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.change24hAsc));
+
       } else if (criterion == 'change_24h_desc') {
-        _filteredCoins.sort((a, b) => b['change_24h'].compareTo(a['change_24h']));
+        _filteredCoins
+            .sort((a, b) => b['change_24h'].compareTo(a['change_24h']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.change24hDesc));
+
       } else if (criterion == 'name_asc') {
         _filteredCoins.sort((a, b) => a['name'].compareTo(b['name']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.nameAsc));
+
       } else if (criterion == 'name_desc') {
         _filteredCoins.sort((a, b) => b['name'].compareTo(a['name']));
+        coinBloc.add(CoinSortEvent(method: CoinSortingMethod.nameDesc));
+
       }
     });
   }
@@ -135,7 +155,8 @@ class _FavouritePageState extends State<FavouritePage> {
         await _fetchCoinPrices();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Le coin $coin n'existe pas ou est invalide.")),
+          SnackBar(
+              content: Text("Le coin $coin n'existe pas ou est invalide.")),
         );
       }
     } else {
@@ -151,7 +172,8 @@ class _FavouritePageState extends State<FavouritePage> {
       builder: (context) {
         return AlertDialog(
           title: Text("Confirmer la suppression"),
-          content: Text("Êtes-vous sûr de vouloir supprimer $coin de vos favoris ?"),
+          content:
+              Text("Êtes-vous sûr de vouloir supprimer $coin de vos favoris ?"),
           actions: [
             TextButton(
               onPressed: () {
@@ -210,33 +232,37 @@ class _FavouritePageState extends State<FavouritePage> {
 
   @override
   Widget build(BuildContext context) {
+    final coinBloc = context.read<CoinBlockProvider>();
+
     return DefaultTabController(
-            length: 1,
-            initialIndex: 0,
+      length: 2,
+      initialIndex: 0,
       child: Scaffold(
-        
         appBar: PreferredSize(
-          preferredSize:  Size.fromHeight(150),
+          preferredSize: Size.fromHeight(150),
           child: AppBar(
             leading: IconButton(
-                onPressed: () => context.pop(),
-                icon: Icon(Icons.arrow_back_ios),
-              ),
+              onPressed: () => context.pop(),
+              icon: Icon(Icons.arrow_back_ios),
+            ),
             title: const Text("Mes Coins Favoris"),
             //backgroundColor: Colors.blue[600],
             actions: [
               // Dropdown de tri
               DropdownButton<String>(
                 value: _selectedSortOption,
-              //  dropdownColor: Colors.blue[600],
-              //  style: TextStyle(color: Colors.white),
+                //  dropdownColor: Colors.blue[600],
+                //  style: TextStyle(color: Colors.white),
                 underline: Container(),
                 icon: Icon(Icons.sort),
                 onChanged: (String? newValue) {
                   if (newValue != null) {
-                    _sortCoins(newValue);
+                    
+
+                    _sortCoins(newValue,coinBloc);
                   }
                 },
+
                 items: [
                   // Option de tri par prix croissant
                   DropdownMenuItem(
@@ -293,7 +319,6 @@ class _FavouritePageState extends State<FavouritePage> {
                         filled: true,
                         fillColor: Colors.white,
                       ),
-                      
                     ),
                     TabBar(tabs: [
                       Tab(
@@ -302,7 +327,6 @@ class _FavouritePageState extends State<FavouritePage> {
                       Tab(
                         text: "Favoris",
                       ),
-                      
                     ]),
                   ],
                 ),
@@ -311,9 +335,9 @@ class _FavouritePageState extends State<FavouritePage> {
           ),
         ),
         body: TabBarView(
-
           children: [
-            Center(child: Text("soon"),),
+            //Center(child: Text("soon"),),
+            MarketScreen(),
 
             Container(
               child: _isLoading
@@ -329,7 +353,7 @@ class _FavouritePageState extends State<FavouritePage> {
                           ),
                           title: Text(coin['name']),
                           subtitle: Text(
-                             "Prix"// "Prix: ${_formatPrice(coin['price'])}\nVariation 24h: ${coin['change_24h'].toStringAsFixed(2)}%"
+                              "Prix" // "Prix: ${_formatPrice(coin['price'])}\nVariation 24h: ${coin['change_24h'].toStringAsFixed(2)}%"
                               ),
                           trailing: IconButton(
                             icon: Icon(Icons.delete, color: Colors.red),
@@ -354,7 +378,8 @@ class _FavouritePageState extends State<FavouritePage> {
                   title: Text("Ajouter un nouveau coin"),
                   content: TextField(
                     controller: _newCoinController,
-                    decoration: InputDecoration(hintText: "Entrez le nom du coin"),
+                    decoration:
+                        InputDecoration(hintText: "Entrez le nom du coin"),
                   ),
                   actions: [
                     TextButton(
