@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -49,15 +51,27 @@ class _MySettingsPageState extends State<MySettingsPage> {
               // Rate use slider
               _buildRateUseSlider(design),
               // Add more settings here...
-              
-              MyButton(
-                  onPressed: () => {context.goNamed(Routes.routeLogin)},
-                  text: "Logout",
-                  color: design.error)
-            ],
+              SizedBox(height: 200,),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                
+                child: 
+                    Center(
+                      child: SizedBox(
+                        width: 350,
+                        child: MyButton(
+                            onPressed: () => {context.goNamed(Routes.routeLogin)},
+                            text: "Logout",
+                            color: design.error),
+                      ),
+                    ),
+                
+                
           ),
+            ]
         ),
       ),
+    )
     );
   }
 

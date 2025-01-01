@@ -28,7 +28,7 @@ import 'package:stocksalertapp/screens/favoris_screen.dart';
 
 
 final GoRouter _router = GoRouter(
-  initialLocation: '/'+Routes.routeExplore,
+  initialLocation: '/'+Routes.routeMyHomePage,
   routes: [
       GoRoute(
       path: '/'+Routes.routeSettings,

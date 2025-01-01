@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:go_router/go_router.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stocksalertapp/models/alert_model.dart';
+import 'package:stocksalertapp/services/firestore_service.dart';
 
 class AlarmPage extends StatefulWidget {
   const AlarmPage({Key? key}) : super(key: key);
@@ -13,16 +15,34 @@ class AlarmPage extends StatefulWidget {
 
 class _AlarmPageState extends State<AlarmPage>
     with SingleTickerProviderStateMixin {
-  List<Map<String, dynamic>> activeAlerts = [];
-  List<Map<String, dynamic>> alertHistory = [];
+  List<AlertModel> activeAlerts = [];
+  List<AlertModel> alertHistory = [];
   late TabController _tabController;
+  String? fcmToken;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _getAlerts();
   }
 
+  void _getAlerts() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('fcmToken');
+    fcmToken = token;
+    if (token != null) {
+      print('Retrieved FCM Token: $token');
+      print("getting Alerts .. ");
+
+      AlertService alertService = AlertService();
+      activeAlerts = await alertService.fetchAlertsByToken(fcmToken ?? "");
+      print(activeAlerts);
+      setState(() {});
+    }
+  }
+
+ 
   // Récupérer le prix actuel via l'API
   Future<double?> getCoinPrice(String coin) async {
     try {
@@ -42,19 +62,19 @@ class _AlarmPageState extends State<AlarmPage>
 
   // Ajouter une alerte
   void _addAlert(String coin, double targetPrice) {
-    setState(() {
+    /* setState(() {
       activeAlerts.add({
         "coin": coin,
         "targetPrice": targetPrice,
         "createdAt": DateTime.now(),
       });
-    });
+    }); */
   }
 
   // Supprimer une alerte active
   void _removeAlert(int index) {
     setState(() {
-      alertHistory.add(activeAlerts[index]);
+      //alertHistory.add(activeAlerts[index]);
       activeAlerts.removeAt(index);
     });
   }
@@ -73,8 +93,8 @@ class _AlarmPageState extends State<AlarmPage>
       isScrollControlled: true,
       builder: (context) {
         return Padding(
-          padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: StatefulBuilder(
             builder: (context, setState) {
               return Padding(
@@ -84,8 +104,8 @@ class _AlarmPageState extends State<AlarmPage>
                   children: [
                     const Text(
                       "Créer une Alarme",
-                      style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
                     TextField(
@@ -95,7 +115,8 @@ class _AlarmPageState extends State<AlarmPage>
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.search),
                           onPressed: () async {
-                            final coin = coinController.text.trim().toLowerCase();
+                            final coin =
+                                coinController.text.trim().toLowerCase();
                             final price = await getCoinPrice(coin);
                             setState(() {
                               if (price != null) {
@@ -116,9 +137,10 @@ class _AlarmPageState extends State<AlarmPage>
                         child: Text(
                           coinValidationMessage!,
                           style: TextStyle(
-                            color: coinValidationMessage!.contains("Prix actuel")
-                                ? Colors.green
-                                : Colors.red,
+                            color:
+                                coinValidationMessage!.contains("Prix actuel")
+                                    ? Colors.green
+                                    : Colors.red,
                           ),
                         ),
                       ),
@@ -176,14 +198,14 @@ class _AlarmPageState extends State<AlarmPage>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-               length: 1,
-            initialIndex: 0,
+      length: 1,
+      initialIndex: 0,
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-              onPressed: () => context.pop(),
-              icon: Icon(Icons.arrow_back_ios),
-            ),
+            onPressed: () => context.pop(),
+            icon: Icon(Icons.arrow_back_ios),
+          ),
           title: const Text("Alarmes"),
           bottom: TabBar(
             controller: _tabController,
@@ -205,12 +227,12 @@ class _AlarmPageState extends State<AlarmPage>
                       final alert = activeAlerts[index];
                       return ListTile(
                         leading: CircleAvatar(
-                          child: Text(alert["coin"][0].toUpperCase()),
+                          child: Icon(Icons.alarm),//Text(alert.coinID.toUpperCase()),
                         ),
                         title: Text(
-                            "${alert['coin'].toUpperCase()} - ${alert['targetPrice']} USD"),
+                            "${alert.coinID.toUpperCase()} - ${alert.value} USD"),
                         subtitle: Text(
-                            "Ajoutée le ${alert['createdAt'].toString().split(' ')[0]}"),
+                            "Ajoutée le ${alert.createdAt.toString().split(' ')[0]}"),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () => _removeAlert(index),
@@ -227,12 +249,12 @@ class _AlarmPageState extends State<AlarmPage>
                       final alert = alertHistory[index];
                       return ListTile(
                         leading: CircleAvatar(
-                          child: Text(alert["coin"][0].toUpperCase()),
+                          child: Text(alert.coinID.toUpperCase()),
                         ),
                         title: Text(
-                            "${alert['coin'].toUpperCase()} - ${alert['targetPrice']} USD"),
+                            "${alert.coinID.toUpperCase()} - ${alert.value} USD"),
                         subtitle: Text(
-                            "Ajoutée le ${alert['createdAt'].toString().split(' ')[0]}"),
+                            "Ajoutée le ${alert.createdAt.toString().split(' ')[0]}"),
                       );
                     },
                   ),
