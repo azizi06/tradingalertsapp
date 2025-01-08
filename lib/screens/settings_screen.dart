@@ -6,6 +6,7 @@ import 'package:stocksalertapp/components/my_button.dart';
 import 'package:stocksalertapp/helpers/design.dart';
 import 'package:stocksalertapp/helpers/routes.dart';
 import 'package:stocksalertapp/models/theme_enum.dart';
+import 'package:stocksalertapp/services/notification_service.dart';
 import 'package:stocksalertapp/state_management/theme_bloc/theme_bloc_provider.dart';
 import 'package:stocksalertapp/state_management/theme_bloc/theme_event.dart';
 
@@ -24,6 +25,7 @@ class _MySettingsPageState extends State<MySettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    NotificationService notificationService = NotificationService();
     Design design = Design(context);
     return SafeArea(
         child: Scaffold(
@@ -64,19 +66,34 @@ class _MySettingsPageState extends State<MySettingsPage> {
                 width: 350,
                 child: MyButton(
                     onPressed: () async {
+                      await notificationService.showNotification(
+                          "Tradding Alerts", "Welcome to our App");
+                    },
+                    text: "Show Notification",
+                    color: design.error),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(
+              child: SizedBox(
+                width: 350,
+                child: MyButton(
+                    onPressed: () async {
                       await FirebaseAuth.instance.signOut();
                       context.goNamed(Routes.routeLogin);
-                           ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('logged out successfully!')),
-                                );
-
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('logged out successfully!')),
+                      );
                     },
                     text: "Logout",
                     color: design.error),
               ),
             ),
           ),
+          
         ]),
       ),
     ));

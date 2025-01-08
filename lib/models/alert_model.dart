@@ -3,8 +3,6 @@ enum StockAlertType {
   priceBelow,
   change24HOver,
   change24HBelow,
-
-  
 }
 
 /// Represents a price alert for a specific cryptocurrency.
@@ -27,8 +25,11 @@ class AlertModel {
   /// The Firebase Cloud Messaging token for notifications.
   final String fcmToken;
 
+  final String uid;
+
   final DateTime createdAt;
   AlertModel({
+    required this.uid,
     required this.coinID,
     required this.type,
     required this.coinPrice,
@@ -40,6 +41,7 @@ class AlertModel {
 
   /// Converts the model to a JSON format for storage or networking.
   Map<String, dynamic> toJson() => {
+        'uid' : uid,
         'coinID': coinID,
         'type': type,
         'coinPrice': coinPrice,
@@ -59,6 +61,7 @@ class AlertModel {
       fcmToken: json['fcmToken'],
       isNotified: json['isNotified'],
       createdAt: DateTime.parse(json['createdAt']),
+      uid: json['uid'],
     );
   }
 }
