@@ -11,10 +11,10 @@ class AlertService {
   }
 
   /// Fetches all alerts for a given FCM token.
-  Future<List<AlertModel>> fetchAlertsByToken(String fcmToken) async {
+  Future<List<AlertModel>> fetchAlertsByToken(String uid) async {
     final querySnapshot = await _firestore
         .collection(collectionName)
-        .where('fcmToken', isEqualTo: fcmToken)
+        .where('uid', isEqualTo: uid)
         .get();
 
     return querySnapshot.docs

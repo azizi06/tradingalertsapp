@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -28,21 +29,20 @@ class _AlarmPageState extends State<AlarmPage>
   }
 
   void _getAlerts() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('fcmToken');
-    fcmToken = token;
-    if (token != null) {
-      print('Retrieved FCM Token: $token');
+    
+    AlertService alertService = AlertService();
+    if ( FirebaseAuth.instance.currentUser != null) {
+      final String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
+      print('Retrieved uid Token: $uid');
       print("getting Alerts .. ");
 
       AlertService alertService = AlertService();
-      activeAlerts = await alertService.fetchAlertsByToken(fcmToken ?? "");
+      activeAlerts = await alertService.fetchAlertsByToken(uid ?? "");
       print(activeAlerts);
       setState(() {});
     }
   }
 
- 
   // Récupérer le prix actuel via l'API
   Future<double?> getCoinPrice(String coin) async {
     try {
@@ -227,7 +227,8 @@ class _AlarmPageState extends State<AlarmPage>
                       final alert = activeAlerts[index];
                       return ListTile(
                         leading: CircleAvatar(
-                          child: Icon(Icons.alarm),//Text(alert.coinID.toUpperCase()),
+                          child: Icon(
+                              Icons.alarm), //Text(alert.coinID.toUpperCase()),
                         ),
                         title: Text(
                             "${alert.coinID.toUpperCase()} - ${alert.value} USD"),

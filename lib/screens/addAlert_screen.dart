@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -146,7 +147,10 @@ class _MyAddalertPageState extends State<MyAddalertPage> {
                         ),
                         SizedBox(width: 8.0),
                         MyIconButton(
-                          onPressed: ()  { _priceController.text = coin.currentPrice.toString();},
+                          onPressed: () {
+                            _priceController.text =
+                                coin.currentPrice.toString();
+                          },
                           color: design.secondary,
                           icon: Icons.refresh_rounded,
                         ),
@@ -176,14 +180,20 @@ class _MyAddalertPageState extends State<MyAddalertPage> {
                             double.tryParse(_priceController.text) ?? 0.0;
                         double? value =
                             double.tryParse(_valueController.text) ?? 0.0;
-
+                      
                         if (selectedChoice.isNotEmpty &&
                             fcmToken != null &&
                             price != 0.0 &&
-                            value != 0.0) {
+                            value != 0.0 &&
+                            FirebaseAuth.instance.currentUser != null 
+                           ) {
+                 
+                                 final String uid =
+                            FirebaseAuth.instance.currentUser?.uid  ?? "";
                           AlertService alertService = AlertService();
 
                           AlertModel newAlert = AlertModel(
+                              uid: uid,
                               coinID: widget.coinID,
                               type: selectedChoice,
                               coinPrice: price,

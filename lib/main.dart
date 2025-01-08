@@ -6,6 +6,7 @@ import 'package:stocksalertapp/models/theme_enum.dart';
 import 'package:stocksalertapp/screens/addAlert_screen.dart';
 import 'package:stocksalertapp/screens/alarm_screen.dart';
 import 'package:stocksalertapp/screens/chart_screen.dart';
+import 'package:stocksalertapp/services/notification_service.dart';
 import 'package:stocksalertapp/state_management/coin_block/coin_block_provider.dart';
 import 'package:stocksalertapp/state_management/theme_bloc/theme_bloc_provider.dart';
 import 'package:stocksalertapp/state_management/theme_bloc/theme_state.dart';
@@ -24,19 +25,18 @@ import 'firebase_options.dart';
 import 'package:stocksalertapp/screens/signup_screen.dart';
 import 'package:stocksalertapp/screens/login_screen.dart';
 import 'package:stocksalertapp/screens/favoris_screen.dart';
-
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 final GoRouter _router = GoRouter(
   initialLocation: '/login',
   routes: [
-      GoRoute(
-      path: '/'+Routes.routeSettings,
+    GoRoute(
+      path: '/' + Routes.routeSettings,
       name: Routes.routeSettings, // pour recuperer le nom du route
       builder: (context, state) => MySettingsPage(),
     ),
     GoRoute(
-      path: '/'+Routes.routeMyHomePage,
+      path: '/' + Routes.routeMyHomePage,
       name: Routes.routeMyHomePage, // pour recuperer le nom du route
       builder: (context, state) => Home(),
     ),
@@ -72,22 +72,21 @@ final GoRouter _router = GoRouter(
       name: "test",
       builder: (context, state) => MyTestPage(),
     ),
-
     GoRoute(
-      path: '/signup', 
-      name: Routes.routeSignUp, 
+      path: '/signup',
+      name: Routes.routeSignUp,
       builder: (context, state) => SignupPage(),
     ),
     GoRoute(
-      path: '/login', 
-      name: Routes.routeLogin, 
-      builder: (context, state) => LoginPage(), 
+      path: '/login',
+      name: Routes.routeLogin,
+      builder: (context, state) => LoginPage(),
     ),
     GoRoute(
-          path: '/favorites',
-          name: Routes.routeFavourite,
-          builder: (context, state) => FavouritePage(),
-        ),
+      path: '/favorites',
+      name: Routes.routeFavourite,
+      builder: (context, state) => FavouritePage(),
+    ),
   ],
 );
 //  cd5curUZSzmCPqUJAHU1w1:APA91bGD_FuixaxeWuanLLVbIhjyvEaVCJSJVUGhYK1-S8HjXyYxIR7ipwUlbM8nifHFL3fFubcCRVu1RVXEg0Jhs5yqd-79qLq3vy61LgkvqI9MDkiTe80
@@ -97,6 +96,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FirebaseMessagingService().initialize();
+  NotificationService notificationService = NotificationService();
+  notificationService.initializeNotifications();
   runApp(const MyApp());
 }
 
@@ -104,7 +105,6 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   //# const MyApp({super.key});
   @override
-  
   Widget build(BuildContext context) {
     // ignore: unused_local_variable
     final brightness = View.of(context).platformDispatcher.platformBrightness;

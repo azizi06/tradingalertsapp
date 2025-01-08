@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stocksalertapp/helpers/design.dart';
 import 'package:stocksalertapp/helpers/routes.dart';
+
 // password : Tlemcen@1234
 // email : tlemcen@algeria.com
 class LoginPage extends StatefulWidget {
@@ -189,23 +191,25 @@ class _LoginPageState extends State<LoginPage> {
                                         .signInWithEmailAndPassword(
                                             email: emailController.text,
                                             password: passwordController.text);
-
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.setString(
+                                    'email', emailController.text);
+                                print("Email Stored");
+                                
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text('Login successful!')),
                                 );
                                 context.goNamed(Routes.routeMyHomePage);
                               } on FirebaseAuthException catch (e) {
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content:
-                                            Text('invalid-email or password')),
-                                  );
-
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text('invalid-email or password')),
+                                );
 
                                 if (e.code == 'invalid-email') {
-                                  
                                   print('Invalid Email');
                                 } else if (e.code == 'invalid-credential') {
                                   print('user-not-found OR Wrong Password');
@@ -219,7 +223,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: Text(
                             "Login",
                             style: GoogleFonts.poppins(
-                              fontSize: 16, 
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: design.onPrimary,
                             ),
