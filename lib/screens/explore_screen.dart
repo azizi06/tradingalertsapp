@@ -101,6 +101,7 @@ class _MyExplorePageState extends State<MyExplorePage> {
                                   currentPrice: state.coins[index].currentPrice, //coins[index].currentPrice,
                                   image: state.coins[index].image,
                                   priceColor: (state.coins[index].priceChange24h >= 0)? Colors.green : Colors.red,
+                                  change: state.coins[index].priceChange24h,
                                 );
                               },
                             );

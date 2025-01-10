@@ -59,6 +59,7 @@ class _MarketScreenState extends State<MarketScreen> {
                       print("in screen YO");
 
                       return MyStockSquareCard(
+                        change: widget.coins[index].priceChangePercentage24h,
                         id: widget.coins[index].id, //coins[index].id,
                         currentPrice: widget.coins[index]
                             .currentPrice, //coins[index].currentPrice,

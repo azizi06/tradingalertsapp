@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stocksalertapp/screens/settings_screen.dart';
+import 'package:stocksalertapp/services/TimerBackgroundTaskManager.dart';
+import 'package:stocksalertapp/services/background_task.dart';
 import 'package:stocksalertapp/services/firebase_messaging_service.dart';
 import 'package:stocksalertapp/models/coin_model.dart';
 import 'package:stocksalertapp/models/theme_enum.dart';
@@ -89,7 +91,6 @@ final GoRouter _router = GoRouter(
     ),
   ],
 );
-//  cd5curUZSzmCPqUJAHU1w1:APA91bGD_FuixaxeWuanLLVbIhjyvEaVCJSJVUGhYK1-S8HjXyYxIR7ipwUlbM8nifHFL3fFubcCRVu1RVXEg0Jhs5yqd-79qLq3vy61LgkvqI9MDkiTe80
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -98,6 +99,8 @@ void main() async {
   await FirebaseMessagingService().initialize();
   NotificationService notificationService = NotificationService();
   notificationService.initializeNotifications();
+ // BackgroundTaskManager().initialize();
+ // TimerBackgroundTaskManager().initialize();
   runApp(const MyApp());
 }
 

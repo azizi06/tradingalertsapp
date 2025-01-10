@@ -63,7 +63,7 @@ class _FavouritePageState extends State<FavouritePage> {
       // Handle error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text("Erreur lors du chargement des prix des pièces.")),
+            content: Text("Error ")),
       );
     } finally {
       _isLoading = false;
@@ -386,11 +386,11 @@ class _FavouritePageState extends State<FavouritePage> {
                 final TextEditingController _newCoinController =
                     TextEditingController();
                 return AlertDialog(
-                  title: Text("Ajouter un nouveau coin"),
+                  title: Text("Add new coin"),
                   content: TextField(
                     controller: _newCoinController,
                     decoration:
-                        InputDecoration(hintText: "Entrez le nom du coin"),
+                        InputDecoration(hintText: "Enter coin name"),
                   ),
                   actions: [
                     TextButton(
