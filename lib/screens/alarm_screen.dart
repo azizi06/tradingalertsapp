@@ -18,6 +18,8 @@ class _AlarmPageState extends State<AlarmPage>
     with SingleTickerProviderStateMixin {
   List<AlertModel> activeAlerts = [];
   List<AlertModel> alertHistory = [];
+  AlertService alertService = AlertService();
+
   late TabController _tabController;
   String? fcmToken;
 
@@ -29,15 +31,19 @@ class _AlarmPageState extends State<AlarmPage>
   }
 
   void _getAlerts() async {
-    
-    AlertService alertService = AlertService();
-    if ( FirebaseAuth.instance.currentUser != null) {
+    if (FirebaseAuth.instance.currentUser != null) {
       final String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
       print('Retrieved uid Token: $uid');
       print("getting Alerts .. ");
-
-      AlertService alertService = AlertService();
-      activeAlerts = await alertService.fetchAlertsByToken(uid ?? "");
+      List<AlertModel> AllAlerts;
+      AllAlerts = await alertService.fetchAlertsByToken(uid ?? "");
+      for (AlertModel alert in AllAlerts) {
+        if (alert.isNotified == true) {
+          alertHistory.add(alert);
+        } else {
+          activeAlerts.add(alert);
+        }
+      }
       print(activeAlerts);
       setState(() {});
     }
@@ -72,10 +78,14 @@ class _AlarmPageState extends State<AlarmPage>
   }
 
   // Supprimer une alerte active
-  void _removeAlert(int index) {
+  void _removeAlert(int index,String? alertID) {
     setState(() {
       //alertHistory.add(activeAlerts[index]);
       activeAlerts.removeAt(index);
+      if(alertID != null){
+      alertService.deleteAlert(alertID);
+
+      }
     });
   }
 
@@ -206,12 +216,12 @@ class _AlarmPageState extends State<AlarmPage>
             onPressed: () => context.pop(),
             icon: Icon(Icons.arrow_back_ios),
           ),
-          title: const Text("Alarmes"),
+          title: const Text("Alerts"),
           bottom: TabBar(
             controller: _tabController,
             tabs: const [
               Tab(text: "Actives"),
-              Tab(text: "Historique"),
+              Tab(text: "History"),
             ],
           ),
         ),
@@ -232,11 +242,16 @@ class _AlarmPageState extends State<AlarmPage>
                         ),
                         title: Text(
                             "${alert.coinID.toUpperCase()} - ${alert.value} USD"),
-                        subtitle: Text(
-                            "Ajoutée le ${alert.createdAt.toString().split(' ')[0]}"),
+                        subtitle: Row(
+                          children: [
+                            Text(
+                                "Added ${alert.createdAt.toString().split(' ')[0]} \n when : ${alert.type} "),
+                               
+                          ],
+                        ),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _removeAlert(index),
+                          onPressed: () => _removeAlert(index,alert.documentId),
                         ),
                       );
                     },
@@ -261,11 +276,11 @@ class _AlarmPageState extends State<AlarmPage>
                   ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
+        /* floatingActionButton: FloatingActionButton(
           onPressed: () => _showAddAlertDialog(context),
           child: const Icon(Icons.add),
           tooltip: "Créer une Alarme",
-        ),
+        ), */
       ),
     );
   }

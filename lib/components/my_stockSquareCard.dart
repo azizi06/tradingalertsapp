@@ -7,6 +7,7 @@ class MyStockSquareCard extends StatelessWidget {
   final double currentPrice;
   final String image;
   final Color priceColor;
+  final double change ;
 
   const MyStockSquareCard({
     super.key,
@@ -14,6 +15,7 @@ class MyStockSquareCard extends StatelessWidget {
     required this.image,
     required this.currentPrice,
     required this.priceColor,
+    required this.change,
   });
 
   @override
@@ -50,7 +52,7 @@ class MyStockSquareCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  currentPrice.toString() + " USD",
+                  currentPrice.toString() + " USD \n  "+change.toString(),
                   style:  TextStyle(
                     color:  priceColor,
                     fontWeight: FontWeight.w500,

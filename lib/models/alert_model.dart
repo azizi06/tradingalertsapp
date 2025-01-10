@@ -1,8 +1,8 @@
-enum StockAlertType {
-  priceOver,
-  priceBelow,
-  change24HOver,
-  change24HBelow,
+class AlertType {
+  static const String priceOver = "Price is over";
+  static const String priceBelow= "Price is below";
+  static const String change24HOver = "24H change is over";
+  static const String change24HBelow = "24H change is below";
 }
 
 /// Represents a price alert for a specific cryptocurrency.
@@ -28,6 +28,8 @@ class AlertModel {
   final String uid;
 
   final DateTime createdAt;
+
+  String? documentId;
   AlertModel({
     required this.uid,
     required this.coinID,
@@ -37,6 +39,7 @@ class AlertModel {
     required this.createdAt,
     required this.fcmToken,
     required this.isNotified,
+    this.documentId
   });
 
   /// Converts the model to a JSON format for storage or networking.
@@ -49,6 +52,7 @@ class AlertModel {
         'isNotified': isNotified,
         'fcmToken': fcmToken,
         'createdAt': createdAt.toIso8601String(),
+        if (documentId != null) 'documentId': documentId,
       };
 
   /// Creates an instance of AlertModel from a JSON object.
@@ -62,6 +66,7 @@ class AlertModel {
       isNotified: json['isNotified'],
       createdAt: DateTime.parse(json['createdAt']),
       uid: json['uid'],
+       //documentId: json['documentId'],
     );
   }
 }

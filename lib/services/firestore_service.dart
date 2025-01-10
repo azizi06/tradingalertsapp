@@ -17,9 +17,11 @@ class AlertService {
         .where('uid', isEqualTo: uid)
         .get();
 
-    return querySnapshot.docs
-        .map((doc) => AlertModel.fromJson(doc.data()))
-        .toList();
+    return querySnapshot.docs.map((doc) {
+      AlertModel alert = AlertModel.fromJson(doc.data());
+      alert.documentId = doc.id;
+      return alert;
+    }).toList();
   }
 
   /// Updates the `isNotified` status of an alert by its document ID.
@@ -33,5 +35,11 @@ class AlertService {
   /// Deletes an alert from Firestore by its document ID.
   Future<void> deleteAlert(String documentId) async {
     await _firestore.collection(collectionName).doc(documentId).delete();
+  }
+
+  Future<void> updateIsNotified(String documentId) async {
+    await _firestore.collection(collectionName).doc(documentId).update({
+      'isNotified': true,
+    });
   }
 }
