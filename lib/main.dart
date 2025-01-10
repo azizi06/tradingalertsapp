@@ -99,7 +99,7 @@ void main() async {
   await FirebaseMessagingService().initialize();
   NotificationService notificationService = NotificationService();
   notificationService.initializeNotifications();
- // BackgroundTaskManager().initialize();
+  BackgroundTaskManager().initialize();
  // TimerBackgroundTaskManager().initialize();
   runApp(const MyApp());
 }
