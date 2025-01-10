@@ -100,10 +100,12 @@ class _MySettingsPageState extends State<MySettingsPage> {
   }
 
   Widget _buildAccountHeader(Design design) {
+    Design design = Design(context);
+
     return ClipPath(
       clipper: MyCustomCurvedEdges(),
       child: Container(
-        color: design.onSurface,
+        color: design.surface,
         child: SizedBox(
           height: 150,
           child: Center(
@@ -125,13 +127,29 @@ class _MySettingsPageState extends State<MySettingsPage> {
                     height: 10,
                     width: 15,
                   ),
-                  const Text(
-                    " Mohammed",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
+                      
+                  
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                               Text(
+                      FirebaseAuth.instance.currentUser?.displayName ?? "user name",
+                    style:  TextStyle(
+                      color: design.onSurface  ,//Colors.white70,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
+                  ),
+                      Text(
+                          FirebaseAuth.instance.currentUser?.email ?? "email",
+                        style:  TextStyle(
+                          color: design.onSurface , //Colors.white70,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -143,6 +161,8 @@ class _MySettingsPageState extends State<MySettingsPage> {
   }
 
   Widget _buildLanguageSelector(Design design) {
+    Design design = Design(context);
+
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Row(

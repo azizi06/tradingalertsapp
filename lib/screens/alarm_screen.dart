@@ -230,7 +230,7 @@ class _AlarmPageState extends State<AlarmPage>
           children: [
             // Onglet des alertes actives
             activeAlerts.isEmpty
-                ? const Center(child: Text("Aucune alarme active."))
+                ? const Center(child: Text("No active alarms."))
                 : ListView.builder(
                     itemCount: activeAlerts.length,
                     itemBuilder: (context, index) {
@@ -258,19 +258,19 @@ class _AlarmPageState extends State<AlarmPage>
                   ),
             // Onglet historique des alertes
             alertHistory.isEmpty
-                ? const Center(child: Text("Aucune alarme dans l'historique."))
+                ? const Center(child: Text("No alarms in the history"))
                 : ListView.builder(
                     itemCount: alertHistory.length,
                     itemBuilder: (context, index) {
                       final alert = alertHistory[index];
                       return ListTile(
                         leading: CircleAvatar(
-                          child: Text(alert.coinID.toUpperCase()),
+                          child: Icon(Icons.alarm_off),
                         ),
                         title: Text(
                             "${alert.coinID.toUpperCase()} - ${alert.value} USD"),
                         subtitle: Text(
-                            "Ajoutée le ${alert.createdAt.toString().split(' ')[0]}"),
+                            "Added ${alert.createdAt.toString().split(' ')[0]}"),
                       );
                     },
                   ),

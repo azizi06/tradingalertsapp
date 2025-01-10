@@ -21,7 +21,7 @@ class MyStockSquareCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: InkWell(
         onTap: () => context.pushNamed(Routes.routeCoinChart,queryParameters:{"coinID" : id}),
         child: Card(
@@ -35,12 +35,12 @@ class MyStockSquareCard extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               CircleAvatar(
                 backgroundImage: NetworkImage(image),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(1.0),
                 child: Text(
                   id,
                   style: const TextStyle(
@@ -50,16 +50,26 @@ class MyStockSquareCard extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  currentPrice.toString() + " USD \n  "+change.toString(),
-                  style:  TextStyle(
-                    color:  priceColor,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 17,
-                  ),
+                padding: const EdgeInsets.all(1.0),
+                child: 
+                    Text(
+                      currentPrice.toString() + " USD \n  ",
+                      style:  TextStyle(
+                        color:  priceColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 17,
+                      ),
+                    ),
+                      
+                  
                 ),
-              ),
+                        Text("${change} %",style: TextStyle(
+                        color:  priceColor,
+                        fontWeight: FontWeight.w200,
+                        //fontSize: 10,
+                      ),)
+
+
             ],
           ),
         ),
