@@ -124,12 +124,12 @@ class _FavouritePageState extends State<FavouritePage> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text("Le coin $coin n'existe pas ou est invalide.")),
+              content: Text("The coin $coin does not exist or is invalid")),
         );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("$coin est déjà dans vos favoris.")),
+        SnackBar(content: Text("$coin is already in your favorites")),
       );
     }
   }
@@ -139,22 +139,22 @@ class _FavouritePageState extends State<FavouritePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Confirmer la suppression"),
+          title: Text("Confirm deletion"),
           content:
-              Text("Êtes-vous sûr de vouloir supprimer $coin de vos favoris ?"),
+              Text("Are you sure you want to remove $coin from your favorites?"),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("Annuler"),
+              child: Text("Cancel"),
             ),
             TextButton(
               onPressed: () {
                 _removeCoin(coin);
                 Navigator.of(context).pop();
               },
-              child: Text("Supprimer"),
+              child: Text("delete"),
             ),
           ],
         );
@@ -249,32 +249,32 @@ class _FavouritePageState extends State<FavouritePage> {
                   // Option de tri par prix croissant
                   DropdownMenuItem(
                     value: 'price_asc',
-                    child: Text("Trier par Prix (Croissant)"),
+                    child: Text("Sort by Price (Ascending)"),
                   ),
                   // Option de tri par prix décroissant
                   DropdownMenuItem(
                     value: 'price_desc',
-                    child: Text("Trier par Prix (Décroissant)"),
+                    child: Text("Sort by Price (Descending)"),
                   ),
                   // Option de tri par variation 24h croissante
                   DropdownMenuItem(
                     value: 'change_24h_asc',
-                    child: Text("Trier par Variation 24h (Croissant)"),
+                    child: Text("Sort by 24h Variation (Ascending)"),
                   ),
                   // Option de tri par variation 24h décroissante
                   DropdownMenuItem(
                     value: 'change_24h_desc',
-                    child: Text("Trier par Variation 24h (Décroissant)"),
+                    child: Text("Sort by 24h Variation (Descending)"),
                   ),
                   // Option de tri par nom croissant (A-Z)
                   DropdownMenuItem(
                     value: 'name_asc',
-                    child: Text("Trier par Nom (A-Z)"),
+                    child: Text("Sort by Name (A-Z)"),
                   ),
                   // Option de tri par nom décroissant (Z-A)
                   DropdownMenuItem(
                     value: 'name_desc',
-                    child: Text("Trier par Nom (Z-A)"),
+                    child: Text("Sort by Name (Z-A)"),
                   ),
                 ],
               ),
@@ -293,7 +293,7 @@ class _FavouritePageState extends State<FavouritePage> {
                     TextField(
                       controller: _searchController,
                       decoration: const InputDecoration(
-                        hintText: "Rechercher un coin...",
+                        hintText: "Search for a coin..",
                         prefixIcon: Icon(Icons.search),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -307,7 +307,7 @@ class _FavouritePageState extends State<FavouritePage> {
                         text: "All Coins",
                       ),
                       Tab(
-                        text: "Favoris",
+                        text: "Favorites",
                       ),
                     ]),
                   ],
@@ -362,7 +362,7 @@ class _FavouritePageState extends State<FavouritePage> {
                                 ),
                                 title: Text(coin.id),
                                 subtitle: Text(
-                                    "Prix: ${_formatPrice(coin.currentPrice)}\nVariation 24h: ${coin.priceChange24h.toStringAsFixed(2)}%"),
+                                    "Price: ${_formatPrice(coin.currentPrice)}\nVariation 24h: ${coin.priceChange24h.toStringAsFixed(2)}%"),
                                 trailing: IconButton(
                                   icon: Icon(Icons.delete, color: Colors.red),
                                   onPressed: () {
@@ -397,14 +397,14 @@ class _FavouritePageState extends State<FavouritePage> {
                       onPressed: () {
                         Navigator.of(context).pop(null);
                       },
-                      child: Text("Annuler"),
+                      child: Text("Cancel"),
                     ),
                     TextButton(
                       onPressed: () {
                         Navigator.of(context)
                             .pop(_newCoinController.text.toLowerCase());
                       },
-                      child: Text("Ajouter"),
+                      child: Text("Add"),
                     ),
                   ],
                 );
