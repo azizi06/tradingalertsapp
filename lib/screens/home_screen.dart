@@ -87,16 +87,16 @@ class _HomeState extends State<Home> {
                           borderRadius: BorderRadius.circular(5)),
                       child: Text(
                         'Portefeuille principal',
-                        style: TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 15),
                       ),
                     ),
                     Text(
                       'Top 10 Coins',
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 15),
                     ),
                     Text(
                       'Expérimental',
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 15),
                     ),
                   ],
                 ),

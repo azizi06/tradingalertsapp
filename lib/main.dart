@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stocksalertapp/screens/settings_screen.dart';
+import 'package:stocksalertapp/screens/splash_screen.dart';
 import 'package:stocksalertapp/services/TimerBackgroundTaskManager.dart';
 import 'package:stocksalertapp/services/background_task.dart';
 import 'package:stocksalertapp/services/firebase_messaging_service.dart';
@@ -30,7 +31,7 @@ import 'package:stocksalertapp/screens/favoris_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 final GoRouter _router = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/splash',
   routes: [
     GoRoute(
       path: '/' + Routes.routeSettings,
@@ -73,6 +74,11 @@ final GoRouter _router = GoRouter(
       path: '/test',
       name: "test",
       builder: (context, state) => MyTestPage(),
+    ),
+    GoRoute(
+      path: '/splash',
+      name: "splash",
+      builder: (context, state) => Splash(),
     ),
     GoRoute(
       path: '/signup',
