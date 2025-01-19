@@ -3,7 +3,7 @@ import 'package:stocksalertapp/screens/settings_screen.dart';
 import 'package:stocksalertapp/services/TimerBackgroundTaskManager.dart';
 import 'package:stocksalertapp/services/background_task.dart';
 import 'package:stocksalertapp/services/firebase_messaging_service.dart';
-import 'package:stocksalertapp/models/coin_model.dart';
+
 import 'package:stocksalertapp/models/theme_enum.dart';
 import 'package:stocksalertapp/screens/addAlert_screen.dart';
 import 'package:stocksalertapp/screens/alarm_screen.dart';
@@ -16,7 +16,7 @@ import 'util.dart';
 import 'theme.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stocksalertapp/helpers/routes.dart';
-import 'package:stocksalertapp/screens/explore_screen.dart';
+
 import 'package:stocksalertapp/screens/home_screen.dart';
 import 'package:stocksalertapp/screens/test_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,11 +42,7 @@ final GoRouter _router = GoRouter(
       name: Routes.routeMyHomePage, // pour recuperer le nom du route
       builder: (context, state) => Home(),
     ),
-    GoRoute(
-      path: '/' + Routes.routeExplore,
-      name: Routes.routeExplore,
-      builder: (context, state) => MyExplorePage(),
-    ),
+  
     GoRoute(
       path: '/' + Routes.routeAlarm,
       name: Routes.routeAlarm,
