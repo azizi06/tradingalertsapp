@@ -28,7 +28,7 @@ class _FavouritePageState extends State<FavouritePage> {
     "binancecoin",
     "dogecoin",
     "solana",
-    "pepecoin" // Ajout de PepeCoin
+    "pepecoin" 
   ];
 
   List<CoinModel> _coinData = [];

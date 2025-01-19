@@ -2,11 +2,11 @@ import 'package:chart_sparkline/chart_sparkline.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
-class Item extends StatelessWidget {
+class MyCoincard extends StatelessWidget {
   // ignore: prefer_typing_uninitialized_variables
   var item;
   // ignore: use_key_in_widget_constructors
-  Item({this.item});
+  MyCoincard({this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -28,26 +28,7 @@ class Item extends StatelessWidget {
             SizedBox(
               width: myWidth * 0.02,
             ),
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.id,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    // ignore: prefer_interpolation_to_compose_strings
-                    '0.4 ' + item.symbol,
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
+            
             SizedBox(
               width: myWidth * 0.01,
             ),
@@ -85,7 +66,7 @@ class Item extends StatelessWidget {
                   Text(
                     // ignore: prefer_interpolation_to_compose_strings
                     '\$ ' + item.currentPrice.toString(),
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                   Row(
                     children: [
@@ -100,7 +81,7 @@ class Item extends StatelessWidget {
                             // ignore: prefer_interpolation_to_compose_strings
                             : "\$" + item.priceChange24H.toStringAsFixed(2),
                         style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 12,
                             fontWeight: FontWeight.normal,
                             color: Colors.grey),
                       ),

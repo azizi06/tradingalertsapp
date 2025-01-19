@@ -16,7 +16,9 @@ enum CoinSortingMethod {
   String toString() => value;
 }
 
+List<CoinModel> coinModelFromJson(String str) => List<CoinModel>.from(json.decode(str).map((x) => CoinModel.fromJson(x)));
 
+//String coinModelToJson(List<CoinModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.to)));
 class CoinModel {
   final String id;
   final String symbol;
