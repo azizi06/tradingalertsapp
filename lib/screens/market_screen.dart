@@ -60,9 +60,9 @@ class _MarketScreenState extends State<MarketScreen> {
 
                       return MyStockSquareCard(
                         change: widget.coins[index].priceChangePercentage24h,
-                        id: widget.coins[index].id, //coins[index].id,
+                        id: widget.coins[index].id, 
                         currentPrice: widget.coins[index]
-                            .currentPrice, //coins[index].currentPrice,
+                            .currentPrice, 
                         image: widget.coins[index].image,
                         priceColor: (widget.coins[index].priceChange24h >= 0)
                             ? Colors.green

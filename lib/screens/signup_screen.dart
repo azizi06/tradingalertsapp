@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:stocksalertapp/helpers/design.dart';
+import 'package:stocksalertapp/helpers/routes.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -31,6 +32,7 @@ class _SignupPageState extends State<SignupPage> {
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
+       
       );
 
       // Mise à jour du nom de l'utilisateur (facultatif)
@@ -43,7 +45,8 @@ class _SignupPageState extends State<SignupPage> {
       );
 
       // Redirige l'utilisateur après l'inscription
-      GoRouter.of(context).go('/home'); // Redirige vers une page "home"
+      context.goNamed(Routes.routeMyHomePage);
+            ; // Redirige vers une page "home"
     } on FirebaseAuthException catch (e) {
       String errorMessage;
 
@@ -233,7 +236,7 @@ class _SignupPageState extends State<SignupPage> {
                               final passwordRegExp = RegExp(passwordPatternRules);
                               if (value == null ||
                                   !passwordRegExp.hasMatch(value)) {
-                                return 'Password must have at least 8 characters, 1 uppercase letter, 1 number, and 1 special character';
+                                return 'Password must have at least 8 characters, 1 uppercase letter,\n 1 number, and 1 special character';
                               }
                               return null;
                             },
@@ -298,6 +301,7 @@ class _SignupPageState extends State<SignupPage> {
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
                                   _createAccount();
+
                                 }
                               },
                               child: Text(

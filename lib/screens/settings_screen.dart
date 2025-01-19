@@ -101,6 +101,8 @@ class _MySettingsPageState extends State<MySettingsPage> {
 
   Widget _buildAccountHeader(Design design) {
     Design design = Design(context);
+    String username = FirebaseAuth.instance.currentUser?.email?.split("@")[0] ?? "username";
+
 
     return ClipPath(
       clipper: MyCustomCurvedEdges(),
@@ -134,7 +136,7 @@ class _MySettingsPageState extends State<MySettingsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                                Text(
-                      FirebaseAuth.instance.currentUser?.displayName ?? "user name",
+                      FirebaseAuth.instance.currentUser?.displayName ??  username,
                     style:  TextStyle(
                       color: design.onSurface  ,//Colors.white70,
                       fontSize: 15,
@@ -142,7 +144,7 @@ class _MySettingsPageState extends State<MySettingsPage> {
                     ),
                   ),
                       Text(
-                          FirebaseAuth.instance.currentUser?.email ?? "email",
+                          FirebaseAuth.instance.currentUser?.email ?? "email@gmail.com",
                         style:  TextStyle(
                           color: design.onSurface , //Colors.white70,
                           fontSize: 12,

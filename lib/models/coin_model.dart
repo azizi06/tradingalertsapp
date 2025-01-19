@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:stocksalertapp/models/sparklineIn7D.dart';
+
 enum CoinSortingMethod {
   priceAsc('price_asc'),
   priceDesc('price_desc'),
@@ -16,7 +18,10 @@ enum CoinSortingMethod {
   String toString() => value;
 }
 
+List<CoinModel> coinModelFromJson(String str) =>
+    List<CoinModel>.from(json.decode(str).map((x) => CoinModel.fromJson(x)));
 
+//String coinModelToJson(List<CoinModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.to)));
 class CoinModel {
   final String id;
   final String symbol;
@@ -36,6 +41,7 @@ class CoinModel {
   final double circulatingSupply;
   final double totalSupply;
   final double maxSupply;
+  SparklineIn7D? sparklineIn7D;
   //final double ath;
   //final double athChangePercentage;
   //final DateTime athDate;
@@ -72,6 +78,7 @@ class CoinModel {
     //required this.atlDate,
     //this.roi,
     //required this.lastUpdated,
+    this.sparklineIn7D
   });
 
   factory CoinModel.fromJson(Map<String, dynamic> json) {
@@ -109,6 +116,7 @@ class CoinModel {
       //atlDate: DateTime.parse(json['atl_date']),
       //roi: json['roi'],
       //lastUpdated: DateTime.parse(json['last_updated']),
+      sparklineIn7D:   SparklineIn7D.fromJson(json["sparkline_in_7d"]) ,
     );
   }
 
