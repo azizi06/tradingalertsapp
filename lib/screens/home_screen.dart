@@ -1,3 +1,4 @@
+import 'package:chart_sparkline/chart_sparkline.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,8 @@ import 'package:stocksalertapp/components/my_stockSquareCard.dart';
 import 'package:stocksalertapp/helpers/design.dart';
 
 import 'package:stocksalertapp/models/coin_model.dart';
+
+import 'package:stocksalertapp/models/sparklineIn7D.dart';
 import 'package:stocksalertapp/state_management/coin_block/coin_block_provider.dart';
 import 'package:stocksalertapp/state_management/coin_block/coin_event.dart';
 import 'package:stocksalertapp/state_management/coin_block/coin_state.dart';
@@ -37,50 +40,10 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    getCoinMarket();
+
     _loadFavorites();
     final coinBloC = context.read<CoinBlockProvider>();
     coinBloC.add(CoinListInitEvent());
-  }
-
-  void fetchNFTListAndModels() async {
-    Dio dio = Dio();
-
-    // First, fetch the NFT list (for example, from an API endpoint)
-    try {
-      var listResponse = await dio.get('https://api.coingecko.com/api/v3/nfts/list');
-      if (listResponse.statusCode == 200) {
-        List<dynamic> nftList = listResponse.data;
-        print('NFT List fetched successfully!');
-
-        // Fetch model details for each NFT in the list
-        for (var nft in nftList.take(30)) {
-          // Limiting to top 30 NFTs
-          String nftId = nft['id'];
-          String contractAddress = nft['contract_address'];
-
-          try {
-            var modelResponse = await dio.get(
-                'https://api.coingecko.com/api/v3/nfts/$nftId',
-               // queryParameters: {'contract_address': contractAddress}
-               );
-
-            if (modelResponse.statusCode == 200) {
-              print('NFT ID: $nftId');
-              print('NFT Model Details: ${modelResponse.data}');
-            } else {
-              print('Failed to fetch model for NFT with ID: $nftId');
-            }
-          } catch (e) {
-            print('Error fetching model for NFT $nftId: $e');
-          }
-        }
-      } else {
-        print('Failed to fetch NFT list');
-      }
-    } catch (e) {
-      print('Error fetching NFT list: $e');
-    }
   }
 
   Future<void> _loadFavorites() async {
@@ -93,37 +56,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  bool isRefreshing = true;
-  List? coinMarket = [];
-  List<CoinModel> coinMarketList = [];
-
-  Future<List<CoinModel>?> getCoinMarket() async {
-    const url =
-        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&sparkline=true';
-
-    setState(() {
-      isRefreshing = true;
-    });
-
-    var response = await http.get(Uri.parse(url), headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-    });
-
-    setState(() {
-      isRefreshing = false;
-    });
-
-    if (response.statusCode == 200) {
-      var data = response.body;
-      coinMarketList = coinModelFromJson(data);
-      setState(() {
-        coinMarket = coinMarketList;
-      });
-    } else {
-      print("Erreur: ${response.statusCode}");
-    }
-  }
+  bool isRefreshing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +76,7 @@ class _HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 14, top: 40),
+                  padding: const EdgeInsets.only(left: 14, top: 55),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -154,8 +87,7 @@ class _HomeState extends State<Home> {
                           Text(
                             "Trading Alerts",
                             style: TextStyle(
-                              fontSize: 30,
-                            ),
+                                fontSize: 35, fontWeight: FontWeight.w800),
                           ),
                           Text(
                             "Stay Up-to-Date",
@@ -173,17 +105,31 @@ class _HomeState extends State<Home> {
                 ),
                 // Entête avec des options (Coins Top 10, etc.)
 
-                SizedBox(height: myHeight * 0.02),
-                Expanded(
-                    child: SizedBox(
-                  height: 1,
-                )),
+                SizedBox(height: myHeight * 0.01),
+
+                Container(
+                  height: 7,
+                  color: design.colorScheme.inverseSurface,
+                ),
+
+                Padding(
+                  padding: EdgeInsets.only(left: 14),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Favorites',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                ),
                 Container(
                   height: 200,
                   child: BlocBuilder<CoinBlockProvider, CoinState>(
                     builder: (context, state) {
                       if (state is CoinState) {
-                        // Replace with the actual state for loaded data
                         return ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: _favcoins.length,
@@ -260,44 +206,32 @@ class _HomeState extends State<Home> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        SizedBox(height: myHeight * 0.02),
-                        Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: myWidth * 0.08),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Favorites',
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: myHeight * 0.02),
+                        SizedBox(height: myHeight * 0.005),
 
                         // Indicateur de rafraîchissement ou liste des actifs
                         isRefreshing
                             ? Center(child: CircularProgressIndicator())
-                            : ListView.builder(
-                                itemCount: coinMarket!.length,
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  if (_favcoins
-                                      .contains(coinMarket![index].id)) {
-                                    return MyCoincard(
-                                      item: coinMarket![index],
-                                    );
-                                  }
-                                },
-                              ),
-                        SizedBox(height: myHeight * 0.02),
+                            : BlocBuilder<CoinBlockProvider, CoinState>(
+                                builder: (context, state) {
+                                return ListView.builder(
+                                  itemCount: state.coins.length,
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 1.0, top: 7, bottom: 8),
+                                        child: MyCoincard(
+                                          coin: state.coins[index],
+                                        ));
+                                  },
+                                );
+                              }),
+                        SizedBox(
+                          height: 350,
+                        )
 
                         // Affichage horizontal des coins recommandés
-                        Container(
-                          height: myHeight * 0.3,
-                        ),
                       ],
                     ),
                   ),

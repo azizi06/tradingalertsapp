@@ -1,12 +1,18 @@
 import 'package:chart_sparkline/chart_sparkline.dart';
 import 'package:flutter/material.dart';
+import 'package:stocksalertapp/models/coin_model.dart';
+import 'package:stocksalertapp/models/sparklineIn7D.dart';
 
 // ignore: must_be_immutable
 class MyCoincard extends StatelessWidget {
   // ignore: prefer_typing_uninitialized_variables
-  var item;
+  final CoinModel coin;
+
   // ignore: use_key_in_widget_constructors
-  MyCoincard({this.item});
+  MyCoincard({
+    required this.coin,
+  
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +29,11 @@ class MyCoincard extends StatelessWidget {
               flex: 1,
               // ignore: sized_box_for_whitespace
               child: Container(
-                  height: myHeight * 0.05, child: Image.network(item.image)),
+                  height: myHeight * 0.05, child: Image.network(coin.image)),
             ),
             SizedBox(
               width: myWidth * 0.02,
             ),
-            
             SizedBox(
               width: myWidth * 0.01,
             ),
@@ -39,9 +44,9 @@ class MyCoincard extends StatelessWidget {
                 height: myHeight * 0.05,
                 // width: myWidth * 0.2,
                 child: Sparkline(
-                  data: item.sparklineIn7D.price,
+                  data: coin.sparklineIn7D?.price ?? [],
                   lineWidth: 2.0,
-                  lineColor: item.marketCapChangePercentage24H >= 0
+                  lineColor: coin.marketCapChangePercentage24h >= 0
                       ? Colors.green
                       : Colors.red,
                   fillMode: FillMode.below,
@@ -49,7 +54,7 @@ class MyCoincard extends StatelessWidget {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       stops: const [0.0, 0.7],
-                      colors: item.marketCapChangePercentage24H >= 0
+                      colors: coin.marketCapChangePercentage24h>= 0
                           ? [Colors.green, Colors.green.shade100]
                           : [Colors.red, Colors.red.shade100]),
                 ),
@@ -65,21 +70,21 @@ class MyCoincard extends StatelessWidget {
                 children: [
                   Text(
                     // ignore: prefer_interpolation_to_compose_strings
-                    '\$ ' + item.currentPrice.toString(),
+                    '\$ ' + coin.currentPrice.toString(),
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                   Row(
                     children: [
                       Text(
-                        item.priceChange24H.toString().contains('-')
+                        coin.priceChange24h.toString().contains('-')
                             // ignore: prefer_interpolation_to_compose_strings
                             ? "-\$" +
-                                item.priceChange24H
+                                coin.priceChange24h
                                     .toStringAsFixed(2)
                                     .toString()
                                     .replaceAll('-', '')
                             // ignore: prefer_interpolation_to_compose_strings
-                            : "\$" + item.priceChange24H.toStringAsFixed(2),
+                            : "\$" + coin.priceChange24h.toStringAsFixed(2),
                         style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.normal,
@@ -89,12 +94,12 @@ class MyCoincard extends StatelessWidget {
                         width: myWidth * 0.03,
                       ),
                       Text(
-                        item.marketCapChangePercentage24H.toStringAsFixed(2) +
+                        coin.marketCapChangePercentage24h.toStringAsFixed(2) +
                             '%',
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.normal,
-                            color: item.marketCapChangePercentage24H >= 0
+                            color: coin.marketCapChangePercentage24h >= 0
                                 ? Colors.green
                                 : Colors.red),
                       ),

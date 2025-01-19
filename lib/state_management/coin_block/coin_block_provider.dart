@@ -48,8 +48,9 @@ class CoinBlockProvider extends Bloc<CoinEvent, CoinState> {
     print("Fetching Data From CoinGecko");
     try {
       final response = await dio.get(
-        'https://api.coingecko.com/api/v3/coins/markets',
-        queryParameters: {'vs_currency': 'usd'}, // Add query parameters
+      'https://api.coingecko.com/api/v3/coins/markets',
+        queryParameters: {'vs_currency': 'usd','sparkline': 'true'},
+         // Add query parameters
       );
 
       if (response.statusCode == 200) {
