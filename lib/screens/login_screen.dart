@@ -27,6 +27,14 @@ class _LoginPageState extends State<LoginPage> {
   final passwordPatternRules = r'^(?=.*[A-Z])(?=.*?[0-9])(?=.*?[ @#\&*~]).{8,}';
 
   @override
+  void initState() {
+    super.initState();
+    if (FirebaseAuth.instance.currentUser != null) {
+      context.goNamed(Routes.routeMyHomePage);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     Design design = Design(context);
     return Scaffold(
@@ -162,8 +170,8 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           validator: (value) {
                             final passwordRegExp = RegExp(passwordPatternRules);
-                            if (value == null ||
-                                !passwordRegExp.hasMatch(value)) {
+                            if (value == null //|| !passwordRegExp.hasMatch(value)
+                               ) {
                               return 'Password must have at least 8 characters,\n 1 uppercase letter, 1 number, and 1 special character';
                             }
                             return null;
@@ -176,7 +184,8 @@ class _LoginPageState extends State<LoginPage> {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              backgroundColor: design.primary, //Colors.blue[600],
+                              backgroundColor:
+                                  design.primary, //Colors.blue[600],
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -185,31 +194,34 @@ class _LoginPageState extends State<LoginPage> {
                               if (_formKey.currentState!.validate()) {
                                 print("Email: ${emailController.text}");
                                 print("Password: ${passwordController.text}");
-        
+
                                 try {
                                   UserCredential userCredential =
-                                      await FirebaseAuth.instance
+                                      await FirebaseAuth
+                                          .instance
                                           .signInWithEmailAndPassword(
                                               email: emailController.text,
-                                              password: passwordController.text);
+                                              password:
+                                                  passwordController.text);
                                   final prefs =
                                       await SharedPreferences.getInstance();
                                   await prefs.setString(
                                       'email', emailController.text);
                                   print("Email Stored");
-                                  
+
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                         content: Text('Login successful!')),
                                   );
                                   context.goNamed(Routes.routeMyHomePage);
                                 } on FirebaseAuthException catch (e) {
+                                  print(e);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                         content:
                                             Text('invalid-email or password')),
                                   );
-        
+
                                   if (e.code == 'invalid-email') {
                                     print('Invalid Email');
                                   } else if (e.code == 'invalid-credential') {
@@ -248,7 +260,9 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 155,)
+                  SizedBox(
+                    height: 155,
+                  )
                 ],
               ),
             ),

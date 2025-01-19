@@ -24,9 +24,7 @@ class BackgroundTaskManager {
   static void _callbackDispatcher() {
     Workmanager().executeTask((task, inputData) async {
       debugPrint("Cheking Alerts ... ");
-      if (FirebaseAuth.instance.currentUser == null) {
-        return Future.value(false);
-      }
+
 
       List<AlertModel> snapshot = [];
       AlertService alertService = AlertService();

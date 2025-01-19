@@ -100,7 +100,7 @@ void main() async {
   NotificationService notificationService = NotificationService();
   notificationService.initializeNotifications();
   BackgroundTaskManager().initialize();
- // TimerBackgroundTaskManager().initialize();
+  TimerBackgroundTaskManager().initialize();
   runApp(const MyApp());
 }
 
